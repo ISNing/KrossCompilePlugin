@@ -41,39 +41,85 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
         inheritedNames: List<String>
     ) {
         factories.add(defaultFactory<HostTarget, _, _>(project, container, "host", inheritedParents, inheritedNames))
+
+        factories.add(defaultFactory<AndroidTarget, _, _>(project, container, "android", inheritedParents, inheritedNames))
         listOf(
-            "androidNativeX64" to "androidX64",
-            "androidNativeX86" to "androidX86",
-            "androidNativeArm32" to "androidArm32",
-            "androidNativeArm64" to "androidArm64",
+            "androidX64",
+            "androidX86",
+            "androidArm32",
+            "androidArm64",
         ).forEach {
-            factories.add(
-                defaultFactory<AndroidTarget, _, _>(
-                    project, container, it.first, inheritedParents, inheritedNames, it.second
+            listOf("ndk", "clang", "zig").forEach { variant ->
+                factories.add(
+                    defaultFactory<AndroidTarget, _, _>(
+                        project,
+                        container,
+                        "$it.$variant",
+                        inheritedParents,
+                        inheritedNames,
+                    )
                 )
-            )
+            }
         }
+
+        factories.add(defaultFactory<IOSTarget, _, _>(project, container, "ios", inheritedParents, inheritedNames))
         listOf(
             "iosArm32",
             "iosArm64",
             "iosX64",
         ).forEach {
-            factories.add(defaultFactory<IOSTarget, _, _>(project, container, it, inheritedParents, inheritedNames))
+            listOf("xcode", "clang", "zig").forEach { variant ->
+                factories.add(
+                    defaultFactory<IOSTarget, _, _>(
+                        project,
+                        container,
+                        "$it.$variant",
+                        inheritedParents,
+                        inheritedNames
+                    )
+                )
+            }
         }
+
+        factories.add(defaultFactory<WatchOSTarget, _, _>(project, container, "watchos", inheritedParents, inheritedNames))
         listOf(
             "watchosArm32",
             "watchosArm64",
             "watchosX86",
             "watchosX64",
         ).forEach {
-            factories.add(defaultFactory<WatchOSTarget, _, _>(project, container, it, inheritedParents, inheritedNames))
+            listOf("xcode", "clang", "zig").forEach { variant ->
+                factories.add(
+                    defaultFactory<WatchOSTarget, _, _>(
+                        project,
+                        container,
+                        "$it.$variant",
+                        inheritedParents,
+                        inheritedNames
+                    )
+                )
+            }
         }
+
+        factories.add(defaultFactory<TvOSTarget, _, _>(project, container, "tvos", inheritedParents, inheritedNames))
         listOf(
             "tvosArm64",
             "tvosX64",
         ).forEach {
-            factories.add(defaultFactory<TvOSTarget, _, _>(project, container, it, inheritedParents, inheritedNames))
+            listOf("xcode", "clang", "zig").forEach { variant ->
+                factories.add(
+                    defaultFactory<TvOSTarget, _, _>(
+                        project,
+                        container,
+                        "$it.$variant",
+                        inheritedParents,
+                        inheritedNames
+                    )
+                )
+            }
         }
+
+        factories.add(defaultFactory<LinuxTarget, _, _>(project, container, "linux", inheritedParents, inheritedNames))
         listOf(
             "linuxX64",
             "linuxArm64",
@@ -81,335 +127,334 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
             "linuxMips32",
             "linuxMipsel32",
         ).forEach {
-            factories.add(defaultFactory<LinuxTarget, _, _>(project, container, it, inheritedParents, inheritedNames))
+            listOf("clang", "zig").forEach { variant ->
+                factories.add(
+                    defaultFactory<LinuxTarget, _, _>(
+                        project,
+                        container,
+                        "$it.$variant",
+                        inheritedParents,
+                        inheritedNames
+                    )
+                )
+            }
         }
+
+        factories.add(defaultFactory<MSVCTarget, _, _>(project, container, "msvc", inheritedParents, inheritedNames))
         listOf(
             "msvcX86",
             "msvcX64",
+            "msvcArm64"
         ).forEach {
-            factories.add(defaultFactory<MSVCTarget, _, _>(project, container, it, inheritedParents, inheritedNames))
+            listOf("clang", "zig").forEach { variant ->
+                factories.add(
+                    defaultFactory<MSVCTarget, _, _>(
+                        project,
+                        container,
+                        "$it.$variant",
+                        inheritedParents,
+                        inheritedNames
+                    )
+                )
+            }
         }
+
+        factories.add(defaultFactory<MinGWTarget, _, _>(project, container, "mingw", inheritedParents, inheritedNames))
         listOf(
             "mingwX86",
             "mingwX64",
+            "mingwArm64"
         ).forEach {
-            factories.add(defaultFactory<MinGWTarget, _, _>(project, container, it, inheritedParents, inheritedNames))
+            listOf("clang", "zig").forEach { variant ->
+                factories.add(
+                    defaultFactory<MinGWTarget, _, _>(
+                        project,
+                        container,
+                        "$it.$variant",
+                        inheritedParents,
+                        inheritedNames
+                    )
+                )
+            }
         }
+
+        factories.add(defaultFactory<DarwinTarget, _, _>(project, container, "macos", inheritedParents, inheritedNames))
         listOf(
             "macosX64",
             "macosArm64",
         ).forEach {
-            factories.add(defaultFactory<DarwinTarget, _, _>(project, container, it, inheritedParents, inheritedNames))
+            listOf("xcode", "clang", "zig").forEach { variant ->
+                factories.add(
+                    defaultFactory<DarwinTarget, _, _>(
+                        project,
+                        container,
+                        "$it.$variant",
+                        inheritedParents,
+                        inheritedNames
+                    )
+                )
+            }
         }
     }
 }
 
 interface KrossCompileTargetContainerWithPresetFunctions : KrossCompileTargetContainerWithFactories {
-    @Suppress("UNCHECKED_CAST")
-    fun host(
-        name: String = "host", configure: KCHostTarget.() -> Unit = { }
-    ): KCHostTarget = configureOrCreate(
-        name, factories.getByName("host") as KrossCompileTargetFactory<KCHostTarget>, configure
-    )
+    val host
+        get() = default<KCHostTarget>("host")
 
-    fun host() = host("host") { }
-    fun host(name: String) = host(name) { }
-    fun host(name: String, configure: Action<KCHostTarget>) = host(name) { configure.execute(this) }
-    fun host(configure: Action<KCHostTarget>) = host("host") { configure.execute(this) }
+    val android
+        get() = default<KCAndroidTarget>("android")
+    val androidNativeX64
+        get() = ndkWithClangWithZig<KCAndroidTarget>("androidX64", "androidNativeX64")
+    val androidNativeX86
+        get() = ndkWithClangWithZig<KCAndroidTarget>("androidX86", "androidNativeX86")
+    val androidNativeArm32
+        get() = ndkWithClangWithZig<KCAndroidTarget>("androidArm32", "androidNativeArm32")
+    val androidNativeArm64
+        get() = ndkWithClangWithZig<KCAndroidTarget>("androidArm64", "androidNativeArm64")
 
-    @Suppress("UNCHECKED_CAST")
-    fun androidNativeX64(
-        name: String = "androidNativeX64", configure: KCAndroidTarget.() -> Unit = { }
-    ): KCAndroidTarget = configureOrCreate(
-        name, factories.getByName("androidNativeX64") as KrossCompileTargetFactory<KCAndroidTarget>, configure
-    )
+    val ios
+        get() = default<KCIOSTarget>("ios")
+    val iosArm32
+        get() = xcodeWithClangWithZig<KCIOSTarget>("iosArm32")
+    val iosArm64
+        get() = xcodeWithClangWithZig<KCIOSTarget>("iosArm64")
+    val iosX64
+        get() = xcodeWithClangWithZig<KCIOSTarget>("iosX64")
 
-    fun androidNativeX64() = androidNativeX64("androidNativeX64") { }
-    fun androidNativeX64(name: String) = androidNativeX64(name) { }
-    fun androidNativeX64(name: String, configure: Action<KCAndroidTarget>) =
-        androidNativeX64(name) { configure.execute(this) }
+    val watchos
+        get() = default<KCWatchOSTarget>("watchos")
+    val watchosArm32
+        get() = xcodeWithClangWithZig<KCWatchOSTarget>("watchosArm32")
+    val watchosArm64
+        get() = xcodeWithClangWithZig<KCWatchOSTarget>("watchosArm64")
+    val watchosX86
+        get() = xcodeWithClangWithZig<KCWatchOSTarget>("watchosX86")
+    val watchosX64
+        get() = xcodeWithClangWithZig<KCWatchOSTarget>("watchosX64")
 
-    fun androidNativeX64(configure: Action<KCAndroidTarget>) =
-        androidNativeX64("androidNativeX64") { configure.execute(this) }
+    val tvos
+        get() = default<KCTvOSTarget>("tvos")
+    val tvosArm64
+        get() = xcodeWithClangWithZig<KCTvOSTarget>("tvosArm64")
+    val tvosX64
+        get() = xcodeWithClangWithZig<KCTvOSTarget>("tvosX64")
 
-    @Suppress("UNCHECKED_CAST")
-    fun androidNativeX86(
-        name: String = "androidNativeX86", configure: KCAndroidTarget.() -> Unit = { }
-    ): KCAndroidTarget = configureOrCreate(
-        name, factories.getByName("androidNativeX86") as KrossCompileTargetFactory<KCAndroidTarget>, configure
-    )
+    val linux
+        get() = default<KCLinuxTarget>("linux")
+    val linuxX64
+        get() = clangWithZig<KCLinuxTarget>("linuxX64")
+    val linuxArm64
+        get() = clangWithZig<KCLinuxTarget>("linuxArm64")
+    val linuxArm32Hfp
+        get() = clangWithZig<KCLinuxTarget>("linuxArm32Hfp")
+    val linuxMips32
+        get() = clangWithZig<KCLinuxTarget>("linuxMips32")
+    val linuxMipsel32
+        get() = clangWithZig<KCLinuxTarget>("linuxMipsel32")
 
-    fun androidNativeX86() = androidNativeX86("androidNativeX86") { }
-    fun androidNativeX86(name: String) = androidNativeX86(name) { }
-    fun androidNativeX86(name: String, configure: Action<KCAndroidTarget>) =
-        androidNativeX86(name) { configure.execute(this) }
+    val msvc
+        get() = default<KCMSVCTarget>("msvc")
+    val msvcX86
+        get() = clangWithZig<KCMSVCTarget>("msvcX86")
+    val msvcX64
+        get() = clangWithZig<KCMSVCTarget>("msvcX64")
+    val msvcArm64
+        get() = clangWithZig<KCMSVCTarget>("msvcArm64")
 
-    fun androidNativeX86(configure: Action<KCAndroidTarget>) =
-        androidNativeX86("androidNativeX86") { configure.execute(this) }
+    val mingw
+        get() = default<KCMinGWTarget>("mingw")
+    val mingwX86
+        get() = clangWithZig<KCMinGWTarget>("mingwX86")
+    val mingwX64
+        get() = clangWithZig<KCMinGWTarget>("mingwX64")
+    val mingwArm64
+        get() = clangWithZig<KCMinGWTarget>("mingwArm64")
 
-    @Suppress("UNCHECKED_CAST")
-    fun androidNativeArm32(
-        name: String = "androidNativeArm32", configure: KCAndroidTarget.() -> Unit = { }
-    ): KCAndroidTarget = configureOrCreate(
-        name, factories.getByName("androidNativeArm32") as KrossCompileTargetFactory<KCAndroidTarget>, configure
-    )
-
-    fun androidNativeArm32() = androidNativeArm32("androidNativeArm32") { }
-    fun androidNativeArm32(name: String) = androidNativeArm32(name) { }
-    fun androidNativeArm32(name: String, configure: Action<KCAndroidTarget>) =
-        androidNativeArm32(name) { configure.execute(this) }
-
-    fun androidNativeArm32(configure: Action<KCAndroidTarget>) =
-        androidNativeArm32("androidNativeArm32") { configure.execute(this) }
-
-    @Suppress("UNCHECKED_CAST")
-    fun androidNativeArm64(
-        name: String = "androidNativeArm64", configure: KCAndroidTarget.() -> Unit = { }
-    ): KCAndroidTarget = configureOrCreate(
-        name, factories.getByName("androidNativeArm64") as KrossCompileTargetFactory<KCAndroidTarget>, configure
-    )
-
-    fun androidNativeArm64() = androidNativeArm64("androidNativeArm64") { }
-    fun androidNativeArm64(name: String) = androidNativeArm64(name) { }
-    fun androidNativeArm64(name: String, configure: Action<KCAndroidTarget>) =
-        androidNativeArm64(name) { configure.execute(this) }
-
-    fun androidNativeArm64(configure: Action<KCAndroidTarget>) =
-        androidNativeArm64("androidNativeArm64") { configure.execute(this) }
-
-    @Suppress("UNCHECKED_CAST")
-    fun iosArm32(
-        name: String = "iosArm32", configure: KCIOSTarget.() -> Unit = { }
-    ): KCIOSTarget = configureOrCreate(
-        name, factories.getByName("iosArm32") as KrossCompileTargetFactory<KCIOSTarget>, configure
-    )
-
-    fun iosArm32() = iosArm32("iosArm32") { }
-    fun iosArm32(name: String) = iosArm32(name) { }
-    fun iosArm32(name: String, configure: Action<KCIOSTarget>) = iosArm32(name) { configure.execute(this) }
-    fun iosArm32(configure: Action<KCIOSTarget>) = iosArm32("iosArm32") { configure.execute(this) }
-
-    @Suppress("UNCHECKED_CAST")
-    fun iosArm64(
-        name: String = "iosArm64", configure: KCIOSTarget.() -> Unit = { }
-    ): KCIOSTarget = configureOrCreate(
-        name, factories.getByName("iosArm64") as KrossCompileTargetFactory<KCIOSTarget>, configure
-    )
-
-    fun iosArm64() = iosArm64("iosArm64") { }
-    fun iosArm64(name: String) = iosArm64(name) { }
-    fun iosArm64(name: String, configure: Action<KCIOSTarget>) = iosArm64(name) { configure.execute(this) }
-    fun iosArm64(configure: Action<KCIOSTarget>) = iosArm64("iosArm64") { configure.execute(this) }
-
-    @Suppress("UNCHECKED_CAST")
-    fun iosX64(
-        name: String = "iosX64", configure: KCIOSTarget.() -> Unit = { }
-    ): KCIOSTarget = configureOrCreate(
-        name, factories.getByName("iosX64") as KrossCompileTargetFactory<KCIOSTarget>, configure
-    )
-
-    fun iosX64() = iosX64("iosX64") { }
-    fun iosX64(name: String) = iosX64(name) { }
-    fun iosX64(name: String, configure: Action<KCIOSTarget>) = iosX64(name) { configure.execute(this) }
-    fun iosX64(configure: Action<KCIOSTarget>) = iosX64("iosX64") { configure.execute(this) }
-
-    @Suppress("UNCHECKED_CAST")
-    fun watchosArm32(
-        name: String = "watchosArm32", configure: KCWatchOSTarget.() -> Unit = { }
-    ): KCWatchOSTarget = configureOrCreate(
-        name, factories.getByName("watchosArm32") as KrossCompileTargetFactory<KCWatchOSTarget>, configure
-    )
-
-    fun watchosArm32() = watchosArm32("watchosArm32") { }
-    fun watchosArm32(name: String) = watchosArm32(name) { }
-    fun watchosArm32(name: String, configure: Action<KCWatchOSTarget>) = watchosArm32(name) { configure.execute(this) }
-    fun watchosArm32(configure: Action<KCWatchOSTarget>) = watchosArm32("watchosArm32") { configure.execute(this) }
-
-    @Suppress("UNCHECKED_CAST")
-    fun watchosArm64(
-        name: String = "watchosArm64", configure: KCWatchOSTarget.() -> Unit = { }
-    ): KCWatchOSTarget = configureOrCreate(
-        name, factories.getByName("watchosArm64") as KrossCompileTargetFactory<KCWatchOSTarget>, configure
-    )
-
-    fun watchosArm64() = watchosArm64("watchosArm64") { }
-    fun watchosArm64(name: String) = watchosArm64(name) { }
-    fun watchosArm64(name: String, configure: Action<KCWatchOSTarget>) = watchosArm64(name) { configure.execute(this) }
-    fun watchosArm64(configure: Action<KCWatchOSTarget>) = watchosArm64("watchosArm64") { configure.execute(this) }
-
-    @Suppress("UNCHECKED_CAST")
-    fun watchosX86(
-        name: String = "watchosX86", configure: KCWatchOSTarget.() -> Unit = { }
-    ): KCWatchOSTarget = configureOrCreate(
-        name, factories.getByName("watchosX86") as KrossCompileTargetFactory<KCWatchOSTarget>, configure
-    )
-
-    fun watchosX86() = watchosX86("watchosX86") { }
-    fun watchosX86(name: String) = watchosX86(name) { }
-    fun watchosX86(name: String, configure: Action<KCWatchOSTarget>) = watchosX86(name) { configure.execute(this) }
-
-    @Suppress("UNCHECKED_CAST")
-    fun watchosX64(
-        name: String = "watchosX64", configure: KCWatchOSTarget.() -> Unit = { }
-    ): KCWatchOSTarget = configureOrCreate(
-        name, factories.getByName("watchosX64") as KrossCompileTargetFactory<KCWatchOSTarget>, configure
-    )
-
-    fun watchosX64() = watchosX64("watchosX64") { }
-    fun watchosX64(name: String) = watchosX64(name) { }
-    fun watchosX64(name: String, configure: Action<KCWatchOSTarget>) = watchosX64(name) { configure.execute(this) }
-    fun watchosX64(configure: Action<KCWatchOSTarget>) = watchosX64("watchosX64") { configure.execute(this) }
-
-    @Suppress("UNCHECKED_CAST")
-    fun tvosArm64(
-        name: String = "tvosArm64", configure: KCTvOSTarget.() -> Unit = { }
-    ): KCTvOSTarget = configureOrCreate(
-        name, factories.getByName("tvosArm64") as KrossCompileTargetFactory<KCTvOSTarget>, configure
-    )
-
-    fun tvosArm64() = tvosArm64("tvosArm64") { }
-    fun tvosArm64(name: String) = tvosArm64(name) { }
-    fun tvosArm64(name: String, configure: Action<KCTvOSTarget>) = tvosArm64(name) { configure.execute(this) }
-    fun tvosArm64(configure: Action<KCTvOSTarget>) = tvosArm64("tvosArm64") { configure.execute(this) }
-
-    @Suppress("UNCHECKED_CAST")
-    fun tvosX64(
-        name: String = "tvosX64", configure: KCTvOSTarget.() -> Unit = { }
-    ): KCTvOSTarget = configureOrCreate(
-        name, factories.getByName("tvosX64") as KrossCompileTargetFactory<KCTvOSTarget>, configure
-    )
-
-    fun tvosX64() = tvosX64("tvosX64") { }
-    fun tvosX64(name: String) = tvosX64(name) { }
-    fun tvosX64(name: String, configure: Action<KCTvOSTarget>) = tvosX64(name) { configure.execute(this) }
-    fun tvosX64(configure: Action<KCTvOSTarget>) = tvosX64("tvosX64") { configure.execute(this) }
-
-    @Suppress("UNCHECKED_CAST")
-    fun linuxX64(
-        name: String = "linuxX64", configure: KCLinuxTarget.() -> Unit = { }
-    ): KCLinuxTarget = configureOrCreate(
-        name, factories.getByName("linuxX64") as KrossCompileTargetFactory<KCLinuxTarget>, configure
-    )
-
-    fun linuxX64() = linuxX64("linuxX64") { }
-    fun linuxX64(name: String) = linuxX64(name) { }
-    fun linuxX64(name: String, configure: Action<KCLinuxTarget>) = linuxX64(name) { configure.execute(this) }
-    fun linuxX64(configure: Action<KCLinuxTarget>) = linuxX64("linuxX64") { configure.execute(this) }
-
-    @Suppress("UNCHECKED_CAST")
-    fun linuxArm64(
-        name: String = "linuxArm64", configure: KCLinuxTarget.() -> Unit = { }
-    ): KCLinuxTarget = configureOrCreate(
-        name, factories.getByName("linuxArm64") as KrossCompileTargetFactory<KCLinuxTarget>, configure
-    )
-
-    fun linuxArm64() = linuxArm64("linuxArm64") { }
-    fun linuxArm64(name: String) = linuxArm64(name) { }
-    fun linuxArm64(name: String, configure: Action<KCLinuxTarget>) = linuxArm64(name) { configure.execute(this) }
-
-    @Suppress("UNCHECKED_CAST")
-    fun linuxArm32Hfp(
-        name: String = "linuxArm32Hfp", configure: KCLinuxTarget.() -> Unit = { }
-    ): KCLinuxTarget = configureOrCreate(
-        name, factories.getByName("linuxArm32Hfp") as KrossCompileTargetFactory<KCLinuxTarget>, configure
-    )
-
-    fun linuxArm32Hfp() = linuxArm32Hfp("linuxArm32Hfp") { }
-
-    fun linuxArm32Hfp(name: String) = linuxArm32Hfp(name) { }
-
-    fun linuxArm32Hfp(name: String, configure: Action<KCLinuxTarget>) = linuxArm32Hfp(name) { configure.execute(this) }
-
-    @Suppress("UNCHECKED_CAST")
-    fun linuxMips32(
-        name: String = "linuxMips32", configure: KCLinuxTarget.() -> Unit = { }
-    ): KCLinuxTarget = configureOrCreate(
-        name, factories.getByName("linuxMips32") as KrossCompileTargetFactory<KCLinuxTarget>, configure
-    )
-
-    fun linuxMips32() = linuxMips32("linuxMips32") { }
-    fun linuxMips32(name: String) = linuxMips32(name) { }
-    fun linuxMips32(name: String, configure: Action<KCLinuxTarget>) = linuxMips32(name) { configure.execute(this) }
-
-    @Suppress("UNCHECKED_CAST")
-    fun linuxMipsel32(
-        name: String = "linuxMipsel32", configure: KCLinuxTarget.() -> Unit = { }
-    ): KCLinuxTarget = configureOrCreate(
-        name, factories.getByName("linuxMipsel32") as KrossCompileTargetFactory<KCLinuxTarget>, configure
-    )
-
-
-    fun linuxMipsel32() = linuxMipsel32("linuxMipsel32") { }
-    fun linuxMipsel32(name: String) = linuxMipsel32(name) { }
-    fun linuxMipsel32(name: String, configure: Action<KCLinuxTarget>) = linuxMipsel32(name) { configure.execute(this) }
-
-    @Suppress("UNCHECKED_CAST")
-    fun msvcX86(
-        name: String = "msvcX86", configure: KCMSVCTarget.() -> Unit = { }
-    ): KCMSVCTarget = configureOrCreate(
-        name, factories.getByName("msvcX86") as KrossCompileTargetFactory<KCMSVCTarget>, configure
-    )
-
-    fun msvcX86() = msvcX86("msvcX86") { }
-    fun msvcX86(name: String) = msvcX86(name) { }
-    fun msvcX86(name: String, configure: Action<KCMSVCTarget>) = msvcX86(name) { configure.execute(this) }
-    fun msvcX86(configure: Action<KCMSVCTarget>) = msvcX86("msvcX86") { configure.execute(this) }
-
-    @Suppress("UNCHECKED_CAST")
-    fun msvcX64(
-        name: String = "msvcX64", configure: KCMSVCTarget.() -> Unit = { }
-    ): KCMSVCTarget = configureOrCreate(
-        name, factories.getByName("msvcX64") as KrossCompileTargetFactory<KCMSVCTarget>, configure
-    )
-
-    fun msvcX64() = msvcX64("msvcX64") { }
-    fun msvcX64(name: String) = msvcX64(name) { }
-    fun msvcX64(name: String, configure: Action<KCMSVCTarget>) = msvcX64(name) { configure.execute(this) }
-    fun msvcX64(configure: Action<KCMSVCTarget>) = msvcX64("msvcX64") { configure.execute(this) }
-
-    @Suppress("UNCHECKED_CAST")
-    fun mingwX86(
-        name: String = "mingwX86", configure: KCMinGWTarget.() -> Unit = { }
-    ): KCMinGWTarget = configureOrCreate(
-        name, factories.getByName("mingwX86") as KrossCompileTargetFactory<KCMinGWTarget>, configure
-    )
-
-    fun mingwX86() = mingwX86("mingwX86") { }
-
-    fun mingwX86(name: String) = mingwX86(name) { }
-
-    fun mingwX86(name: String, configure: Action<KCMinGWTarget>) = mingwX86(name) { configure.execute(this) }
-
-    @Suppress("UNCHECKED_CAST")
-    fun mingwX64(
-        name: String = "mingwX64", configure: KCMinGWTarget.() -> Unit = { }
-    ): KCMinGWTarget = configureOrCreate(
-        name, factories.getByName("mingwX64") as KrossCompileTargetFactory<KCMinGWTarget>, configure
-    )
-
-    fun mingwX64() = mingwX64("mingwX64") { }
-    fun mingwX64(name: String) = mingwX64(name) { }
-    fun mingwX64(name: String, configure: Action<KCMinGWTarget>) = mingwX64(name) { configure.execute(this) }
-
-    @Suppress("UNCHECKED_CAST")
-    fun macosX64(
-        name: String = "macosX64", configure: KCDarwinTarget.() -> Unit = { }
-    ): KCDarwinTarget = configureOrCreate(
-        name, factories.getByName("macosX64") as KrossCompileTargetFactory<KCDarwinTarget>, configure
-    )
-
-    fun macosX64() = macosX64("macosX64") { }
-    fun macosX64(name: String) = macosX64(name) { }
-    fun macosX64(name: String, configure: Action<KCDarwinTarget>) = macosX64(name) { configure.execute(this) }
-
-    @Suppress("UNCHECKED_CAST")
-    fun macosArm64(
-        name: String = "macosArm64", configure: KCDarwinTarget.() -> Unit = { }
-    ): KCDarwinTarget = configureOrCreate(
-        name, factories.getByName("macosArm64") as KrossCompileTargetFactory<KCDarwinTarget>, configure
-    )
-
-    fun macosArm64() = macosArm64("macosArm64") { }
-    fun macosArm64(name: String) = macosArm64(name) { }
-    fun macosArm64(name: String, configure: Action<KCDarwinTarget>) = macosArm64(name) { configure.execute(this) }
+    val macos
+        get() = default<KCDarwinTarget>("macos")
+    val macosX64
+        get() = xcodeWithClangWithZig<KCDarwinTarget>("macosX64")
+    val macosArm64
+        get() = xcodeWithClangWithZig<KCDarwinTarget>("macosArm64")
 }
+
+
+interface HasBaseFactoryName {
+    val baseFactoryName: String
+}
+
+interface HasDefaultTargetName {
+    val defaultTargetName: String
+}
+
+interface HasInlinedHelperFunctions<T : KrossCompileTarget<*>> {
+    fun inlinedConfigureOrCreate(
+        targetName: String,
+        factoryName: String,
+        configure: T.() -> Unit,
+    ): T
+}
+
+interface FunctionsBase<T : KrossCompileTarget<*>> : HasBaseFactoryName, HasDefaultTargetName, HasInlinedHelperFunctions<T>
+
+interface DefaultFunctions<T : KrossCompileTarget<*>> : FunctionsBase<T> {
+    operator fun invoke(
+        name: String = defaultTargetName,
+        configure: T.() -> Unit = { }
+    ): T =
+        inlinedConfigureOrCreate(
+            name,
+            baseFactoryName,
+            configure
+        )
+
+    operator fun invoke() = invoke(defaultTargetName) { }
+    operator fun invoke(name: String) = invoke(name) { }
+    operator fun invoke(name: String, configure: Action<T>) = invoke(name) { configure.execute(this) }
+    operator fun invoke(configure: Action<T>) = invoke(defaultTargetName) { configure.execute(this) }
+}
+
+interface NdkFunctions<T : KrossCompileTarget<*>> : FunctionsBase<T> {
+    fun ndk(
+        name: String = defaultTargetName,
+        configure: T.() -> Unit = { }
+    ): T =
+        inlinedConfigureOrCreate(
+            name,
+            "$baseFactoryName.ndk",
+            configure
+        )
+
+    fun ndk() = ndk(defaultTargetName) { }
+    fun ndk(name: String) = ndk(name) { }
+    fun ndk(name: String, configure: Action<T>) = ndk(name) { configure.execute(this) }
+    fun ndk(configure: Action<T>) = ndk(defaultTargetName) { configure.execute(this) }
+}
+
+interface XCodeFunctions<T : KrossCompileTarget<*>> : FunctionsBase<T> {
+    fun xcode(
+        name: String = defaultTargetName,
+        configure: T.() -> Unit = { }
+    ): T =
+        inlinedConfigureOrCreate(
+            name,
+            "$baseFactoryName.xcode",
+            configure
+        )
+
+    fun xcode() = xcode(defaultTargetName) { }
+    fun xcode(name: String) = xcode(name) { }
+    fun xcode(name: String, configure: Action<T>) = xcode(name) { configure.execute(this) }
+    fun xcode(configure: Action<T>) = xcode(defaultTargetName) { configure.execute(this) }
+}
+
+interface ClangFunctions<T : KrossCompileTarget<*>> : FunctionsBase<T> {
+    fun clang(
+        name: String = defaultTargetName,
+        configure: T.() -> Unit = { }
+    ): T =
+        inlinedConfigureOrCreate(
+            name,
+            "$baseFactoryName.clang",
+            configure
+        )
+
+    fun clang() = clang(defaultTargetName) { }
+    fun clang(name: String) = clang(name) { }
+    fun clang(name: String, configure: Action<T>) = clang(name) { configure.execute(this) }
+    fun clang(configure: Action<T>) = clang(defaultTargetName) { configure.execute(this) }
+}
+
+interface ZigFunctions<T : KrossCompileTarget<*>> : FunctionsBase<T> {
+    fun zig(
+        name: String = defaultTargetName,
+        configure: T.() -> Unit = { }
+    ): T =
+        inlinedConfigureOrCreate(
+            name,
+            "$baseFactoryName.zig",
+            configure
+        )
+
+    fun zig() = zig(defaultTargetName) { }
+    fun zig(name: String) = zig(name) { }
+    fun zig(name: String, configure: Action<T>) = zig(name) { configure.execute(this) }
+    fun zig(configure: Action<T>) = zig(defaultTargetName) { configure.execute(this) }
+}
+
+interface ClangWithZig<T : KrossCompileTarget<*>> : ClangFunctions<T>, ZigFunctions<T>
+interface XCodeWithClangWithZig<T : KrossCompileTarget<*>> : XCodeFunctions<T>, ClangWithZig<T>
+interface NdkWithClangWithZig<T : KrossCompileTarget<*>> : NdkFunctions<T>, ClangWithZig<T>
+
+private inline fun <reified T : KrossCompileTarget<*>> KrossCompileTargetContainerWithFactories.default(baseFactoryName: String, defaultTargetName: String = baseFactoryName) =
+    object :
+        DefaultFunctions<T> {
+        override val baseFactoryName: String = baseFactoryName
+        override val defaultTargetName: String = defaultTargetName
+
+        @Suppress("UNCHECKED_CAST")
+        override fun inlinedConfigureOrCreate(
+            targetName: String,
+            factoryName: String,
+            configure: T.() -> Unit
+        ): T = configureOrCreate(
+            targetName,
+            factories.getByName(factoryName) as KrossCompileTargetFactory<T>,
+            configure
+        )
+    }
+
+private inline fun <reified T : KrossCompileTarget<*>> KrossCompileTargetContainerWithFactories.ndkWithClangWithZig(baseFactoryName: String, defaultTargetName: String = baseFactoryName) =
+    object :
+        NdkWithClangWithZig<T> {
+        override val baseFactoryName: String = baseFactoryName
+        override val defaultTargetName: String = defaultTargetName
+
+        @Suppress("UNCHECKED_CAST")
+        override fun inlinedConfigureOrCreate(
+            targetName: String,
+            factoryName: String,
+            configure: T.() -> Unit
+        ): T = configureOrCreate(
+            targetName,
+            factories.getByName(factoryName) as KrossCompileTargetFactory<T>,
+            configure
+        )
+    }
+
+private inline fun <reified T : KrossCompileTarget<*>> KrossCompileTargetContainerWithFactories.xcodeWithClangWithZig(baseFactoryName: String, defaultTargetName: String = baseFactoryName) =
+    object :
+        XCodeWithClangWithZig<T> {
+        override val baseFactoryName: String = baseFactoryName
+        override val defaultTargetName: String = defaultTargetName
+
+        @Suppress("UNCHECKED_CAST")
+        override fun inlinedConfigureOrCreate(
+            targetName: String,
+            factoryName: String,
+            configure: T.() -> Unit
+        ): T = configureOrCreate(
+            targetName,
+            factories.getByName(factoryName) as KrossCompileTargetFactory<T>,
+            configure
+        )
+    }
+
+private inline fun <reified T : KrossCompileTarget<*>> KrossCompileTargetContainerWithFactories.clangWithZig(baseFactoryName: String, defaultTargetName: String = baseFactoryName) =
+    object :
+        ClangWithZig<T> {
+        override val baseFactoryName: String = baseFactoryName
+        override val defaultTargetName: String = defaultTargetName
+
+        @Suppress("UNCHECKED_CAST")
+        override fun inlinedConfigureOrCreate(
+            targetName: String,
+            factoryName: String,
+            configure: T.() -> Unit
+        ): T = configureOrCreate(
+            targetName,
+            factories.getByName(factoryName) as KrossCompileTargetFactory<T>,
+            configure
+        )
+    }
