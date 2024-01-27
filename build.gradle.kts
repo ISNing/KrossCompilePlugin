@@ -1,12 +1,25 @@
+import java.util.*
+
 plugins {
     kotlin("jvm") version "1.9.21"
-    id("com.gradle.plugin-publish") version "1.0.0"
+    id("com.gradle.plugin-publish") version "1.2.1"
     `kotlin-dsl`
     id("idea")
 }
 
 group = "io.github.isning.gradle.plugins.kn"
 version = "1.0-SNAPSHOT"
+
+Properties().apply {
+    rootProject.file("local.properties").takeIf { it.exists() && it.isFile }?.let { load(it.reader()) }
+}.onEach { (key, value) ->
+    if (key is String) ext[key] = value
+}
+
+if (!ext.has("gradle.publish.key")) ext["gradle.publish.key"] =
+    System.getenv("GRADLE_PUBLISH_KEY")
+if (!ext.has("gradle.publish.secret")) ext["gradle.publish.secret"] =
+    System.getenv("GRADLE_PUBLISH_SECRET")
 
 repositories {
     mavenLocal()
