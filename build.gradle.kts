@@ -16,7 +16,7 @@ repositories {
 
 dependencies {
     implementation("org.apache.commons:commons-text:1.10.0")
-    implementation("io.github.isning.gradle.plugins:CMakePlugin:0.1.0")
+    implementation("io.github.isning.gradle.plugins:CMakePlugin:0.1.1")
     implementation("org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin:1.9.21")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 }
