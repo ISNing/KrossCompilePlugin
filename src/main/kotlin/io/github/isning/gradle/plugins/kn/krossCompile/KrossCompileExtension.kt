@@ -36,10 +36,10 @@ internal val Project.krossCompileDirectory: Directory
     get() = project.layout.buildDirectory.dir("krossCompile").get()
 
 open class KrossCompileExtension(project: Project) :
-    AbstractKrossCompileConfiguration<ModifiableCMakeConfiguration<ModifiableCMakeGeneralParams, ModifiableCMakeBuildParams>>(
+    AbstractKrossCompileConfiguration<ModifiableCMakeSettings<ModifiableCMakeGeneralParams, ModifiableCMakeBuildParams>>(
         project
     ) {
-    override val cmake: CMakeSettings<ModifiableCMakeConfiguration<ModifiableCMakeGeneralParams, ModifiableCMakeBuildParams>> =
+    override val cmake: ModifiableCMakeSettings<ModifiableCMakeGeneralParams, ModifiableCMakeBuildParams> =
         CMakeSettingsImpl(project, project.cmakeExtension.delegateWith({ null }, {
             sourceDir?.let {
                 ModifiableCMakeGeneralParamsImpl().apply {

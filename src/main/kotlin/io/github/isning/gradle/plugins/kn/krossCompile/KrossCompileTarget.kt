@@ -31,21 +31,16 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import kotlin.io.path.Path
 
-interface KrossCompileTarget<T : CMakeTarget> : Named, KrossCompileConfiguration<T> {
+interface KrossCompileTarget<T : CMakeTargetSettings<*>> : Named, KrossCompileConfiguration<T> {
     val targetName: String
     override val cinterop: CInteropSettings
-    override val cmake: CMakeTargetSettings<T>
+    override val cmake: T
 }
 
-abstract class AbstractKrossCompileTarget<T : CMakeTarget>(project: Project) : KrossCompileTarget<T>,
+abstract class AbstractKrossCompileTarget<T : CMakeTargetSettings<*>>(project: Project) : KrossCompileTarget<T>,
     AbstractKrossCompileConfiguration<T>(project) {
     final override fun getName(): String = targetName
 
-    @JvmName("cmakeT")
-    fun cmake(configure: CMakeTargetSettings<T>.() -> Unit) = cmake.configure()
-
-    @JvmName("cmakeT")
-    fun cmake(configure: Action<CMakeTargetSettings<T>>) = configure.execute(cmake)
 }
 
 fun interface ModifiableCMakeTargetFactory<C : ModifiableCMakeGeneralParams, B : ModifiableCMakeBuildParams> {
@@ -67,7 +62,7 @@ class KrossCompileTargetImpl<C : ModifiableCMakeGeneralParams, B : ModifiableCMa
     private val inheritedNames: List<String>,
     buildParamsInitialOverlay: CMakeParams? = null,
     configParamsInitialOverlay: CMakeParams? = null,
-) : AbstractKrossCompileTarget<ModifiableCMakeTarget<C, B>>(project) {
+) : AbstractKrossCompileTarget<ModifiableCMakeTargetSettings<ModifiableCMakeTarget<C, B>, C, B>>(project) {
     private val delegatedTarget: ModifiableCMakeTarget<C, B> = rawTarget.delegateWith(
         { buildParamsInitialOverlay },
         {
@@ -104,7 +99,7 @@ class KrossCompileTargetImpl<C : ModifiableCMakeGeneralParams, B : ModifiableCMa
             TASK_NAME_PREFIX_GENERATE_DEF_FILE + taskNameSuffix, GenerateDefFileTask::class.java
         ) {
             val delegatedConfigurations = inheritedParents + object :
-                KrossCompileConfiguration<ModifiableCMakeTarget<C, B>> by this@KrossCompileTargetImpl {
+                KrossCompileConfiguration<ModifiableCMakeTargetSettings<ModifiableCMakeTarget<C, B>, C, B>> by this@KrossCompileTargetImpl {
                 override val cinterop = object : CInteropSettings by this@KrossCompileTargetImpl.cinterop {
                     override val libraryPaths
                         get() = this@KrossCompileTargetImpl.cinterop.libraryPaths +

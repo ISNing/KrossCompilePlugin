@@ -26,12 +26,12 @@ import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 
-interface KrossCompileLibrary<T : CMakeProject> : Named, KrossCompileConfiguration<T>, KrossCompileTargetContainer {
+interface KrossCompileLibrary<T : CMakeLibrarySettings<*>> : Named, KrossCompileConfiguration<T>, KrossCompileTargetContainer {
     override val cinterop: CInteropSettings
-    override val cmake: CMakeLibrarySettings<T>
+    override val cmake: T
 }
 
-abstract class AbstractKrossCompileLibrary<T : CMakeProject>(
+abstract class AbstractKrossCompileLibrary<T : CMakeLibrarySettings<*>>(
     project: Project,
     private val inheritedParents: List<KrossCompileConfiguration<*>>,
     private val inheritedNames: List<String>,
@@ -68,7 +68,7 @@ class KrossCompileLibraryImpl(
     private val inheritedNames: List<String>,
     buildParamsInitialOverlay: CMakeParams? = null,
     configParamsInitialOverlay: CMakeParams? = null
-) : AbstractKrossCompileLibrary<CMakeProjectImpl>(project, inheritedParents, inheritedNames),
+) : AbstractKrossCompileLibrary<CMakeLibrarySettings<CMakeProjectImpl>>(project, inheritedParents, inheritedNames),
     KrossCompileTargetContainerWithPresetFunctions,
     KrossCompileTargetContainerWithFactoriesRegisterer {
 

@@ -20,9 +20,9 @@ import io.github.isning.gradle.plugins.cmake.CMakeConfiguration
 import org.gradle.api.Action
 import org.gradle.api.Project
 
-interface KrossCompileConfiguration<T : CMakeConfiguration> {
+interface KrossCompileConfiguration<T : CMakeSettings<*>> {
     val cinterop: CInteropSettings
-    val cmake: CMakeSettings<T>
+    val cmake: T
     val sourceDir: String?
 
     /**
@@ -32,29 +32,32 @@ interface KrossCompileConfiguration<T : CMakeConfiguration> {
     val libraryArtifactNames: List<String>?
 }
 
-interface ModifiableKrossCompileConfiguration<T : CMakeConfiguration> : KrossCompileConfiguration<T> {
+interface ModifiableKrossCompileConfiguration<T : CMakeSettings<*>> : KrossCompileConfiguration<T> {
     override val cinterop: ModifiableCInteropSettings
     override var sourceDir: String?
     override var outputPath: String?
     override var libraryArtifactNames: List<String>?
 }
 
-abstract class AbstractKrossCompileConfiguration<T : CMakeConfiguration>(project: Project) :
+abstract class AbstractKrossCompileConfiguration<T : CMakeSettings<*>>(project: Project) :
     ModifiableKrossCompileConfiguration<T> {
     override val cinterop: ModifiableCInteropSettings = CInteropSettingsImpl(project)
     override var sourceDir: String? = null
     override var outputPath: String? = null
     override var libraryArtifactNames: List<String>? = null
+
+    fun cmake(configure: T.() -> Unit) = cmake.configure()
+    fun cmake(configure: Action<T>) = configure.execute(cmake)
 }
 
-class KrossCompileConfigurationImpl<T : CMakeConfiguration>(
+class KrossCompileConfigurationImpl<T : CMakeSettings<*>>(
     override var sourceDir: String? = null,
     override var outputPath: String? = null,
     override var libraryArtifactNames: List<String>? = null,
     override var cinterop: CInteropSettings,
-    override var cmake: CMakeSettings<T>
+    override var cmake: T
 ) : KrossCompileConfiguration<T> {
-    constructor(sourceDir: String?, outputPath: String?, libraryArtifactNames: List<String>?, cinterop: CInteropSettings, cmake: CMakeSettings<T>, configure: KrossCompileConfiguration<T>.() -> Unit) : this(
+    constructor(sourceDir: String?, outputPath: String?, libraryArtifactNames: List<String>?, cinterop: CInteropSettings, cmake: T, configure: KrossCompileConfiguration<T>.() -> Unit) : this(
         sourceDir,
         outputPath,
         libraryArtifactNames,
@@ -75,4 +78,4 @@ class KrossCompileConfigurationImpl<T : CMakeConfiguration>(
     }
 }
 
-fun <T: CMakeConfiguration> KrossCompileConfiguration<T>.toModifiable(configure: KrossCompileConfigurationImpl<T>.() -> Unit = {}): KrossCompileConfigurationImpl<T> = KrossCompileConfigurationImpl(this).apply(configure)
+fun <T: CMakeSettings<*>> KrossCompileConfiguration<T>.toModifiable(configure: KrossCompileConfigurationImpl<T>.() -> Unit = {}): KrossCompileConfigurationImpl<T> = KrossCompileConfigurationImpl(this).apply(configure)
