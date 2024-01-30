@@ -26,7 +26,7 @@ Apply the plugin to your project:
 
 ```kotlin
 plugins {
-    id("io.github.isning.gradle.plugins.kn.krossCompile") version "0.1.0"
+    id("io.github.isning.gradle.plugins.kn.krossCompile") version "0.1.1"
 }
 ```
 
