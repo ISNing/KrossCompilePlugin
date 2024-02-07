@@ -136,8 +136,11 @@ class KrossCompileTargetImpl<C : ModifiableCMakeGeneralParams, B : ModifiableCMa
 typealias KCHostTarget = KrossCompileTargetImpl<ModifiableHostParamsImpl, ModifiableCMakeBuildParamsImpl>
 typealias KCAndroidTarget = KrossCompileTargetImpl<ModifiableAndroidParamsImpl, ModifiableCMakeBuildParamsImpl>
 typealias KCIOSTarget = KrossCompileTargetImpl<ModifiableIOSParamsImpl, ModifiableCMakeBuildParamsImpl>
+typealias KCIOSSimulatorTarget = KCIOSTarget
 typealias KCWatchOSTarget = KrossCompileTargetImpl<ModifiableWatchOSParamsImpl, ModifiableCMakeBuildParamsImpl>
+typealias KCWatchOSSimulatorTarget = KCWatchOSTarget
 typealias KCTvOSTarget = KrossCompileTargetImpl<ModifiableTvOSParamsImpl, ModifiableCMakeBuildParamsImpl>
+typealias KCTvOSSimulatorTarget = KCTvOSTarget
 typealias KCLinuxTarget = KrossCompileTargetImpl<ModifiableLinuxParamsImpl, ModifiableCMakeBuildParamsImpl>
 typealias KCMSVCTarget = KrossCompileTargetImpl<ModifiableMSVCParamsImpl, ModifiableCMakeBuildParamsImpl>
 typealias KCMinGWTarget = KrossCompileTargetImpl<ModifiableMinGWParamsImpl, ModifiableCMakeBuildParamsImpl>

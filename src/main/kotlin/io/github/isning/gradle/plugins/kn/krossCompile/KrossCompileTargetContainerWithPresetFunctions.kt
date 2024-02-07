@@ -82,7 +82,6 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
         listOf(
             "iosArm32",
             "iosArm64",
-            "iosX64",
         ).forEach {
             listOf("xcode", "clang", "zig").forEach { variant ->
                 factories.add(
@@ -97,16 +96,51 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
             }
         }
 
+        factories.add(defaultFactory<IOSSimulatorTarget, _, _>(project, container, "iosSimulator", inheritedParents, inheritedNames))
+        listOf(
+            "iosSimulatorArm64",
+            "iosSimulatorX64",
+        ).forEach {
+            listOf("xcode", "clang", "zig").forEach { variant ->
+                factories.add(
+                    defaultFactory<IOSSimulatorTarget, _, _>(
+                        project,
+                        container,
+                        "$it.$variant",
+                        inheritedParents,
+                        inheritedNames
+                    )
+                )
+            }
+        }
+
         factories.add(defaultFactory<WatchOSTarget, _, _>(project, container, "watchos", inheritedParents, inheritedNames))
         listOf(
             "watchosArm32",
             "watchosArm64",
-            "watchosX86",
             "watchosX64",
         ).forEach {
             listOf("xcode", "clang", "zig").forEach { variant ->
                 factories.add(
                     defaultFactory<WatchOSTarget, _, _>(
+                        project,
+                        container,
+                        "$it.$variant",
+                        inheritedParents,
+                        inheritedNames
+                    )
+                )
+            }
+        }
+
+        factories.add(defaultFactory<WatchOSSimulatorTarget, _, _>(project, container, "watchosSimulator", inheritedParents, inheritedNames))
+        listOf(
+            "watchosSimulatorArm64",
+            "watchosSimulatorX64",
+        ).forEach {
+            listOf("xcode", "clang", "zig").forEach { variant ->
+                factories.add(
+                    defaultFactory<WatchOSSimulatorTarget, _, _>(
                         project,
                         container,
                         "$it.$variant",
@@ -125,6 +159,24 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
             listOf("xcode", "clang", "zig").forEach { variant ->
                 factories.add(
                     defaultFactory<TvOSTarget, _, _>(
+                        project,
+                        container,
+                        "$it.$variant",
+                        inheritedParents,
+                        inheritedNames
+                    )
+                )
+            }
+        }
+
+        factories.add(defaultFactory<TvOSSimulatorTarget, _, _>(project, container, "tvosSimulator", inheritedParents, inheritedNames))
+        listOf(
+            "tvosSimulatorArm64",
+            "tvosSimulatorX64",
+        ).forEach {
+            listOf("xcode", "clang", "zig").forEach { variant ->
+                factories.add(
+                    defaultFactory<TvOSSimulatorTarget, _, _>(
                         project,
                         container,
                         "$it.$variant",
@@ -235,8 +287,12 @@ interface KrossCompileTargetContainerWithPresetFunctions : KrossCompileTargetCon
         get() = xcodeWithClangWithZig<KCIOSTarget>("iosArm32")
     val iosArm64
         get() = xcodeWithClangWithZig<KCIOSTarget>("iosArm64")
+    val iosSimulator
+        get() = default<KCIOSSimulatorTarget>("iosSimulator")
+    val iosSimulatorArm64
+        get() = xcodeWithClangWithZig<KCIOSSimulatorTarget>("iosSimulatorArm64")
     val iosX64
-        get() = xcodeWithClangWithZig<KCIOSTarget>("iosX64")
+        get() = xcodeWithClangWithZig<KCIOSSimulatorTarget>("iosSimulatorX64", "iosX64")
 
     val watchos
         get() = default<KCWatchOSTarget>("watchos")
@@ -244,17 +300,23 @@ interface KrossCompileTargetContainerWithPresetFunctions : KrossCompileTargetCon
         get() = xcodeWithClangWithZig<KCWatchOSTarget>("watchosArm32")
     val watchosArm64
         get() = xcodeWithClangWithZig<KCWatchOSTarget>("watchosArm64")
-    val watchosX86
-        get() = xcodeWithClangWithZig<KCWatchOSTarget>("watchosX86")
+    val watchosSimulator
+        get() = default<KCWatchOSSimulatorTarget>("watchosSimulator")
+    val watchosSimulatorArm64
+        get() = xcodeWithClangWithZig<KCWatchOSSimulatorTarget>("watchosSimulatorArm64")
     val watchosX64
-        get() = xcodeWithClangWithZig<KCWatchOSTarget>("watchosX64")
+        get() = xcodeWithClangWithZig<KCWatchOSSimulatorTarget>("watchosSimulatorX64", "watchosX64")
 
     val tvos
         get() = default<KCTvOSTarget>("tvos")
     val tvosArm64
         get() = xcodeWithClangWithZig<KCTvOSTarget>("tvosArm64")
+    val tvosSimulator
+        get() = default<KCTvOSSimulatorTarget>("tvosSimulator")
+    val tvosSimulatorArm64
+        get() = xcodeWithClangWithZig<KCTvOSSimulatorTarget>("tvosSimulatorArm64")
     val tvosX64
-        get() = xcodeWithClangWithZig<KCTvOSTarget>("tvosX64")
+        get() = xcodeWithClangWithZig<KCTvOSSimulatorTarget>("tvosSimulatorX64", "tvosX64")
 
     val linux
         get() = default<KCLinuxTarget>("linux")
