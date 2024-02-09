@@ -118,7 +118,6 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
         listOf(
             "watchosArm32",
             "watchosArm64",
-            "watchosX64",
         ).forEach {
             listOf("xcode", "clang", "zig").forEach { variant ->
                 factories.add(
@@ -154,7 +153,6 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
         factories.add(defaultFactory<TvOSTarget, _, _>(project, container, "tvos", inheritedParents, inheritedNames))
         listOf(
             "tvosArm64",
-            "tvosX64",
         ).forEach {
             listOf("xcode", "clang", "zig").forEach { variant ->
                 factories.add(
