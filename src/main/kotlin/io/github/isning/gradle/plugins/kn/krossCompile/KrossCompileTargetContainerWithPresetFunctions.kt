@@ -80,7 +80,6 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
 
         factories.add(defaultFactory<IOSTarget, _, _>(project, container, "ios", inheritedParents, inheritedNames))
         listOf(
-            "iosArm32",
             "iosArm64",
         ).forEach {
             listOf("xcode", "clang", "zig").forEach { variant ->
@@ -189,9 +188,6 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
         listOf(
             "linuxX64",
             "linuxArm64",
-            "linuxArm32Hfp",
-            "linuxMips32",
-            "linuxMipsel32",
         ).forEach {
             listOf("clang", "zig").forEach { variant ->
                 factories.add(
@@ -208,9 +204,7 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
 
         factories.add(defaultFactory<MinGWTarget, _, _>(project, container, "mingw", inheritedParents, inheritedNames))
         listOf(
-            "mingwX86",
             "mingwX64",
-            "mingwArm64"
         ).forEach {
             listOf("clang", "zig").forEach { variant ->
                 factories.add(
