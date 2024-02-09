@@ -208,25 +208,6 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
             }
         }
 
-        factories.add(defaultFactory<MSVCTarget, _, _>(project, container, "msvc", inheritedParents, inheritedNames))
-        listOf(
-            "msvcX86",
-            "msvcX64",
-            "msvcArm64"
-        ).forEach {
-            listOf("clang", "zig").forEach { variant ->
-                factories.add(
-                    defaultFactory<MSVCTarget, _, _>(
-                        project,
-                        container,
-                        "$it.$variant",
-                        inheritedParents,
-                        inheritedNames
-                    )
-                )
-            }
-        }
-
         factories.add(defaultFactory<MinGWTarget, _, _>(project, container, "mingw", inheritedParents, inheritedNames))
         listOf(
             "mingwX86",
@@ -330,15 +311,6 @@ interface KrossCompileTargetContainerWithPresetFunctions : KrossCompileTargetCon
         get() = clangWithZig<KCLinuxTarget>("linuxMips32")
     val linuxMipsel32
         get() = clangWithZig<KCLinuxTarget>("linuxMipsel32")
-
-    val msvc
-        get() = default<KCMSVCTarget>("msvc")
-    val msvcX86
-        get() = clangWithZig<KCMSVCTarget>("msvcX86")
-    val msvcX64
-        get() = clangWithZig<KCMSVCTarget>("msvcX64")
-    val msvcArm64
-        get() = clangWithZig<KCMSVCTarget>("msvcArm64")
 
     val mingw
         get() = default<KCMinGWTarget>("mingw")
