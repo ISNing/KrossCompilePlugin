@@ -21,6 +21,8 @@ import io.github.isning.gradle.plugins.cmake.params.ModifiableCMakeBuildParams
 import io.github.isning.gradle.plugins.cmake.params.ModifiableCMakeGeneralParams
 import io.github.isning.gradle.plugins.cmake.params.platform.*
 import io.github.isning.gradle.plugins.cmake.targets.*
+import io.github.isning.gradle.plugins.kn.krossCompile.utils.decamelizeWith
+import io.github.isning.gradle.plugins.kn.krossCompile.utils.useKonan
 import org.gradle.api.Action
 import org.gradle.api.Project
 
@@ -76,6 +78,20 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                     )
                 )
             }
+            factories.add(
+                defaultFactory<AndroidTarget, _, _>(
+                    project,
+                    container,
+                    "$it.konan",
+                    inheritedParents,
+                    inheritedNames,
+                    "android"
+                ) {
+                    cmake {
+                        useKonan(it.decamelizeWith("_"))
+                    }
+                }
+            )
         }
 
         factories.add(defaultFactory<IOSTarget, _, _>(project, container, "ios", inheritedParents, inheritedNames))
@@ -93,6 +109,20 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                     )
                 )
             }
+            factories.add(
+                defaultFactory<IOSTarget, _, _>(
+                    project,
+                    container,
+                    "$it.konan",
+                    inheritedParents,
+                    inheritedNames,
+                    "ios"
+                ) {
+                    cmake {
+                        useKonan(it.decamelizeWith("_"))
+                    }
+                }
+            )
         }
 
         factories.add(defaultFactory<IOSSimulatorTarget, _, _>(project, container, "iosSimulator", inheritedParents, inheritedNames))
@@ -111,6 +141,20 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                     )
                 )
             }
+            factories.add(
+                defaultFactory<IOSSimulatorTarget, _, _>(
+                    project,
+                    container,
+                    "$it.konan",
+                    inheritedParents,
+                    inheritedNames,
+                    "iosSimulator"
+                ) {
+                    cmake {
+                        useKonan(it.replace("SimulatorX64$".toRegex(), "X64").decamelizeWith("_"))
+                    }
+                }
+            )
         }
 
         factories.add(defaultFactory<WatchOSTarget, _, _>(project, container, "watchos", inheritedParents, inheritedNames))
@@ -129,6 +173,20 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                     )
                 )
             }
+            factories.add(
+                defaultFactory<WatchOSTarget, _, _>(
+                    project,
+                    container,
+                    "$it.konan",
+                    inheritedParents,
+                    inheritedNames,
+                    "watchos"
+                ) {
+                    cmake {
+                        useKonan(it.decamelizeWith("_"))
+                    }
+                }
+            )
         }
 
         factories.add(defaultFactory<WatchOSSimulatorTarget, _, _>(project, container, "watchosSimulator", inheritedParents, inheritedNames))
@@ -147,6 +205,20 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                     )
                 )
             }
+            factories.add(
+                defaultFactory<WatchOSSimulatorTarget, _, _>(
+                    project,
+                    container,
+                    "$it.konan",
+                    inheritedParents,
+                    inheritedNames,
+                    "watchosSimulator"
+                ) {
+                    cmake {
+                        useKonan(it.replace("SimulatorX64$".toRegex(), "X64").decamelizeWith("_"))
+                    }
+                }
+            )
         }
 
         factories.add(defaultFactory<TvOSTarget, _, _>(project, container, "tvos", inheritedParents, inheritedNames))
@@ -164,6 +236,20 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                     )
                 )
             }
+            factories.add(
+                defaultFactory<TvOSTarget, _, _>(
+                    project,
+                    container,
+                    "$it.konan",
+                    inheritedParents,
+                    inheritedNames,
+                    "tvos"
+                ) {
+                    cmake {
+                        useKonan(it.decamelizeWith("_"))
+                    }
+                }
+            )
         }
 
         factories.add(defaultFactory<TvOSSimulatorTarget, _, _>(project, container, "tvosSimulator", inheritedParents, inheritedNames))
@@ -182,6 +268,20 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                     )
                 )
             }
+            factories.add(
+                defaultFactory<TvOSSimulatorTarget, _, _>(
+                    project,
+                    container,
+                    "$it.konan",
+                    inheritedParents,
+                    inheritedNames,
+                    "tvosSimulator"
+                ) {
+                    cmake {
+                        useKonan(it.replace("SimulatorX64$".toRegex(), "X64").decamelizeWith("_"))
+                    }
+                }
+            )
         }
 
         factories.add(defaultFactory<LinuxTarget, _, _>(project, container, "linux", inheritedParents, inheritedNames))
@@ -200,6 +300,20 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                     )
                 )
             }
+            factories.add(
+                defaultFactory<LinuxTarget, _, _>(
+                    project,
+                    container,
+                    "$it.konan",
+                    inheritedParents,
+                    inheritedNames,
+                    "linux"
+                ) {
+                    cmake {
+                        useKonan(it.decamelizeWith("_"))
+                    }
+                }
+            )
         }
 
         factories.add(defaultFactory<MinGWTarget, _, _>(project, container, "mingw", inheritedParents, inheritedNames))
@@ -217,6 +331,20 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                     )
                 )
             }
+            factories.add(
+                defaultFactory<MinGWTarget, _, _>(
+                    project,
+                    container,
+                    "$it.konan",
+                    inheritedParents,
+                    inheritedNames,
+                    "mingw"
+                ) {
+                    cmake {
+                        useKonan(it.decamelizeWith("_"))
+                    }
+                }
+            )
         }
 
         factories.add(defaultFactory<DarwinTarget, _, _>(project, container, "macos", inheritedParents, inheritedNames))
@@ -235,6 +363,20 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                     )
                 )
             }
+            factories.add(
+                defaultFactory<DarwinTarget, _, _>(
+                    project,
+                    container,
+                    "$it.konan",
+                    inheritedParents,
+                    inheritedNames,
+                    "macos"
+                ) {
+                    cmake {
+                        useKonan(it.decamelizeWith("_"))
+                    }
+                }
+            )
         }
     }
 }
@@ -246,79 +388,79 @@ interface KrossCompileTargetContainerWithPresetFunctions : KrossCompileTargetCon
     val android
         get() = default<KCAndroidTarget>("android")
     val androidNativeX64
-        get() = ndkWithClangWithZig<KCAndroidTarget>("androidX64", "androidNativeX64")
+        get() = ndkWithKonanWithClangWithZig<KCAndroidTarget>("androidX64", "androidNativeX64")
     val androidNativeX86
-        get() = ndkWithClangWithZig<KCAndroidTarget>("androidX86", "androidNativeX86")
+        get() = ndkWithKonanWithClangWithZig<KCAndroidTarget>("androidX86", "androidNativeX86")
     val androidNativeArm32
-        get() = ndkWithClangWithZig<KCAndroidTarget>("androidArm32", "androidNativeArm32")
+        get() = ndkWithKonanWithClangWithZig<KCAndroidTarget>("androidArm32", "androidNativeArm32")
     val androidNativeArm64
-        get() = ndkWithClangWithZig<KCAndroidTarget>("androidArm64", "androidNativeArm64")
+        get() = ndkWithKonanWithClangWithZig<KCAndroidTarget>("androidArm64", "androidNativeArm64")
 
     val ios
         get() = default<KCIOSTarget>("ios")
     val iosArm32
-        get() = xcodeWithClangWithZig<KCIOSTarget>("iosArm32")
+        get() = xcodeWithKonanWithClangWithZig<KCIOSTarget>("iosArm32")
     val iosArm64
-        get() = xcodeWithClangWithZig<KCIOSTarget>("iosArm64")
+        get() = xcodeWithKonanWithClangWithZig<KCIOSTarget>("iosArm64")
     val iosSimulator
         get() = default<KCIOSSimulatorTarget>("iosSimulator")
     val iosSimulatorArm64
-        get() = xcodeWithClangWithZig<KCIOSSimulatorTarget>("iosSimulatorArm64")
+        get() = xcodeWithKonanWithClangWithZig<KCIOSSimulatorTarget>("iosSimulatorArm64")
     val iosX64
-        get() = xcodeWithClangWithZig<KCIOSSimulatorTarget>("iosSimulatorX64", "iosX64")
+        get() = xcodeWithKonanWithClangWithZig<KCIOSSimulatorTarget>("iosSimulatorX64", "iosX64")
 
     val watchos
         get() = default<KCWatchOSTarget>("watchos")
     val watchosArm32
-        get() = xcodeWithClangWithZig<KCWatchOSTarget>("watchosArm32")
+        get() = xcodeWithKonanWithClangWithZig<KCWatchOSTarget>("watchosArm32")
     val watchosArm64
-        get() = xcodeWithClangWithZig<KCWatchOSTarget>("watchosArm64")
+        get() = xcodeWithKonanWithClangWithZig<KCWatchOSTarget>("watchosArm64")
     val watchosSimulator
         get() = default<KCWatchOSSimulatorTarget>("watchosSimulator")
     val watchosSimulatorArm64
-        get() = xcodeWithClangWithZig<KCWatchOSSimulatorTarget>("watchosSimulatorArm64")
+        get() = xcodeWithKonanWithClangWithZig<KCWatchOSSimulatorTarget>("watchosSimulatorArm64")
     val watchosX64
-        get() = xcodeWithClangWithZig<KCWatchOSSimulatorTarget>("watchosSimulatorX64", "watchosX64")
+        get() = xcodeWithKonanWithClangWithZig<KCWatchOSSimulatorTarget>("watchosSimulatorX64", "watchosX64")
 
     val tvos
         get() = default<KCTvOSTarget>("tvos")
     val tvosArm64
-        get() = xcodeWithClangWithZig<KCTvOSTarget>("tvosArm64")
+        get() = xcodeWithKonanWithClangWithZig<KCTvOSTarget>("tvosArm64")
     val tvosSimulator
         get() = default<KCTvOSSimulatorTarget>("tvosSimulator")
     val tvosSimulatorArm64
-        get() = xcodeWithClangWithZig<KCTvOSSimulatorTarget>("tvosSimulatorArm64")
+        get() = xcodeWithKonanWithClangWithZig<KCTvOSSimulatorTarget>("tvosSimulatorArm64")
     val tvosX64
-        get() = xcodeWithClangWithZig<KCTvOSSimulatorTarget>("tvosSimulatorX64", "tvosX64")
+        get() = xcodeWithKonanWithClangWithZig<KCTvOSSimulatorTarget>("tvosSimulatorX64", "tvosX64")
 
     val linux
         get() = default<KCLinuxTarget>("linux")
     val linuxX64
-        get() = clangWithZig<KCLinuxTarget>("linuxX64")
+        get() = konanWithClangWithZig<KCLinuxTarget>("linuxX64")
     val linuxArm64
-        get() = clangWithZig<KCLinuxTarget>("linuxArm64")
+        get() = konanWithClangWithZig<KCLinuxTarget>("linuxArm64")
     val linuxArm32Hfp
-        get() = clangWithZig<KCLinuxTarget>("linuxArm32Hfp")
+        get() = konanWithClangWithZig<KCLinuxTarget>("linuxArm32Hfp")
     val linuxMips32
-        get() = clangWithZig<KCLinuxTarget>("linuxMips32")
+        get() = konanWithClangWithZig<KCLinuxTarget>("linuxMips32")
     val linuxMipsel32
-        get() = clangWithZig<KCLinuxTarget>("linuxMipsel32")
+        get() = konanWithClangWithZig<KCLinuxTarget>("linuxMipsel32")
 
     val mingw
         get() = default<KCMinGWTarget>("mingw")
     val mingwX86
-        get() = clangWithZig<KCMinGWTarget>("mingwX86")
+        get() = konanWithClangWithZig<KCMinGWTarget>("mingwX86")
     val mingwX64
-        get() = clangWithZig<KCMinGWTarget>("mingwX64")
+        get() = konanWithClangWithZig<KCMinGWTarget>("mingwX64")
     val mingwArm64
-        get() = clangWithZig<KCMinGWTarget>("mingwArm64")
+        get() = konanWithClangWithZig<KCMinGWTarget>("mingwArm64")
 
     val macos
         get() = default<KCDarwinTarget>("macos")
     val macosX64
-        get() = xcodeWithClangWithZig<KCDarwinTarget>("macosX64")
+        get() = xcodeWithKonanWithClangWithZig<KCDarwinTarget>("macosX64")
     val macosArm64
-        get() = xcodeWithClangWithZig<KCDarwinTarget>("macosArm64")
+        get() = xcodeWithKonanWithClangWithZig<KCDarwinTarget>("macosArm64")
 }
 
 
@@ -355,6 +497,23 @@ interface DefaultFunctions<T : KrossCompileTarget<*>> : FunctionsBase<T> {
     operator fun invoke(name: String) = invoke(name) { }
     operator fun invoke(name: String, configure: Action<T>) = invoke(name) { configure.execute(this) }
     operator fun invoke(configure: Action<T>) = invoke(defaultTargetName) { configure.execute(this) }
+}
+
+interface KonanFunctions<T : KrossCompileTarget<*>> : FunctionsBase<T> {
+    fun konan(
+        name: String = defaultTargetName,
+        configure: T.() -> Unit = { }
+    ): T =
+        inlinedConfigureOrCreate(
+            name,
+            "$baseFactoryName.konan",
+            configure
+        )
+
+    fun konan() = konan(defaultTargetName) { }
+    fun konan(name: String) = konan(name) { }
+    fun konan(name: String, configure: Action<T>) = konan(name) { configure.execute(this) }
+    fun konan(configure: Action<T>) = konan(defaultTargetName) { configure.execute(this) }
 }
 
 interface NdkFunctions<T : KrossCompileTarget<*>> : FunctionsBase<T> {
@@ -425,9 +584,9 @@ interface ZigFunctions<T : KrossCompileTarget<*>> : FunctionsBase<T> {
     fun zig(configure: Action<T>) = zig(defaultTargetName) { configure.execute(this) }
 }
 
-interface ClangWithZig<T : KrossCompileTarget<*>> : ClangFunctions<T>, ZigFunctions<T>
-interface XCodeWithClangWithZig<T : KrossCompileTarget<*>> : XCodeFunctions<T>, ClangWithZig<T>
-interface NdkWithClangWithZig<T : KrossCompileTarget<*>> : NdkFunctions<T>, ClangWithZig<T>
+interface KonanWithClangWithZig<T : KrossCompileTarget<*>> : KonanFunctions<T>, ClangFunctions<T>, ZigFunctions<T>
+interface XCodeWithKonanWithClangWithZig<T : KrossCompileTarget<*>> : XCodeFunctions<T>, KonanWithClangWithZig<T>
+interface NdkWithKonanWithClangWithZig<T : KrossCompileTarget<*>> : NdkFunctions<T>, KonanWithClangWithZig<T>
 
 private inline fun <reified T : KrossCompileTarget<*>> KrossCompileTargetContainerWithFactories.default(baseFactoryName: String, defaultTargetName: String = baseFactoryName) =
     object :
@@ -447,9 +606,9 @@ private inline fun <reified T : KrossCompileTarget<*>> KrossCompileTargetContain
         )
     }
 
-private inline fun <reified T : KrossCompileTarget<*>> KrossCompileTargetContainerWithFactories.ndkWithClangWithZig(baseFactoryName: String, defaultTargetName: String = baseFactoryName) =
+private inline fun <reified T : KrossCompileTarget<*>> KrossCompileTargetContainerWithFactories.ndkWithKonanWithClangWithZig(baseFactoryName: String, defaultTargetName: String = baseFactoryName) =
     object :
-        NdkWithClangWithZig<T> {
+        NdkWithKonanWithClangWithZig<T> {
         override val baseFactoryName: String = baseFactoryName
         override val defaultTargetName: String = defaultTargetName
 
@@ -465,9 +624,9 @@ private inline fun <reified T : KrossCompileTarget<*>> KrossCompileTargetContain
         )
     }
 
-private inline fun <reified T : KrossCompileTarget<*>> KrossCompileTargetContainerWithFactories.xcodeWithClangWithZig(baseFactoryName: String, defaultTargetName: String = baseFactoryName) =
+private inline fun <reified T : KrossCompileTarget<*>> KrossCompileTargetContainerWithFactories.xcodeWithKonanWithClangWithZig(baseFactoryName: String, defaultTargetName: String = baseFactoryName) =
     object :
-        XCodeWithClangWithZig<T> {
+        XCodeWithKonanWithClangWithZig<T> {
         override val baseFactoryName: String = baseFactoryName
         override val defaultTargetName: String = defaultTargetName
 
@@ -483,9 +642,9 @@ private inline fun <reified T : KrossCompileTarget<*>> KrossCompileTargetContain
         )
     }
 
-private inline fun <reified T : KrossCompileTarget<*>> KrossCompileTargetContainerWithFactories.clangWithZig(baseFactoryName: String, defaultTargetName: String = baseFactoryName) =
+private inline fun <reified T : KrossCompileTarget<*>> KrossCompileTargetContainerWithFactories.konanWithClangWithZig(baseFactoryName: String, defaultTargetName: String = baseFactoryName) =
     object :
-        ClangWithZig<T> {
+        KonanWithClangWithZig<T> {
         override val baseFactoryName: String = baseFactoryName
         override val defaultTargetName: String = defaultTargetName
 

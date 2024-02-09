@@ -71,28 +71,28 @@ krossCompile {
             }
 
             // Define target platforms
-            androidNativeX64.ndk()
-            androidNativeX86.ndk()
-            androidNativeArm32.ndk()
-            androidNativeArm64.ndk()
+            androidNativeX64.konan()
+            androidNativeX86.konan()
+            androidNativeArm32.konan()
+            androidNativeArm64.konan()
 
-            linuxX64.clang()
-            linuxArm64.clang()
-            mingwX64.clang()
+            linuxX64.konan()
+            linuxArm64.konan()
+            mingwX64.konan()
 
             if (hostOs == "Mac OS X") {
-                iosX64.xcode()
-                iosArm64.xcode()
-                iosArm64.xcode("iosSimulatorArm64")
-                macosX64.xcode()
-                macosArm64.xcode()
-                watchosX64.xcode()
-                watchosArm32.xcode()
-                watchosArm64.xcode()
-                watchosArm64.xcode("watchosSimulatorArm64")
-                tvosX64.xcode()
-                tvosArm64.xcode()
-                tvosArm64.xcode("tvosSimulatorArm64")
+                iosX64.konan()
+                iosArm64.konan()
+                iosSimulatorArm64.konan()
+                macosX64.konan()
+                macosArm64.konan()
+                watchosX64.konan()
+                watchosArm32.konan()
+                watchosArm64.konan()
+                watchosSimulatorArm64.konan()
+                tvosX64.konan()
+                tvosArm64.konan()
+                tvosSimulatorArm64.konan()
             }
         }
     }
@@ -114,13 +114,16 @@ krossCompile {
 As well as static library's names.
     - `configParams`: Defines the configuration parameters for the CMake build.
     - `buildParams`: Defines the build parameters for the CMake build.
-- `androidNative[arch]/{ndk,clang,zig}()`: Configures the Android targets. Replace `[arch]` with the architecture
-(e.g., `X64`, `X86`, `Arm32`, `Arm64`) and choose the compiler (`ndk`, `clang`, `zig`).
-- `linux[arch].{clang, zig}()`: Configures the Linux targets. Replace `[arch]` with the architecture
-(e.g., `X64`, `Arm64`) and choose the compiler (`clang`, `zig`).
-- `[apple target][arch].{xcode, clang, zig}()`: Configures the Apple targets. Replace `[apple target]` with the target
+- `androidNative[arch]/{konan,ndk,clang,zig}()`: Configures the Android targets. Replace `[arch]` with the architecture
+(e.g., `X64`, `X86`, `Arm32`, `Arm64`) and choose the compiler (`konan`, `ndk`, `clang`, `zig`).
+- `linux[arch].{konan,clang, zig}()`: Configures the Linux targets. Replace `[arch]` with the architecture
+(e.g., `X64`, `Arm64`) and choose the compiler (`konan`, `clang`, `zig`).
+- `[apple target][arch].{konan,xcode,clang,zig}()`: Configures the Apple targets. Replace `[apple target]` with the target
 platform (e.g., `ios`, `macos`, `watchos`, `tvos`), `[arch]` with the architecture (e.g., `X64`, `Arm64`) and choose the
-compiler (`xcode`, `clang`, `zig`).
+compiler (`konan`, `xcode`, `clang`, `zig`).
+
+Compiler preset `konan` is **Highly recommended** for it can keep building toolchain aligned with K/N compiling progress
+to avoid potential linking failure)
 
 *Note*: To know more about configuring `cmake` block, see [CMakePlugin](https://github.com/ISNing/CMakePlugin)
 

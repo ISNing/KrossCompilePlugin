@@ -40,10 +40,10 @@ internal fun dashSeparatedLowercaseName(vararg nameParts: String?): String {
     return nonEmptyParts.joinToString(separator = "-")
 }
 
-internal fun String.decamelize(): String {
+internal fun String.decamelizeWith(separator: String): String {
     return replace(upperCaseRegex) {
         val (first) = it.destructured
-        "-${first.toLowerCaseAsciiOnly()}"
+        "$separator${first.toLowerCaseAsciiOnly()}"
     }
 }
 
