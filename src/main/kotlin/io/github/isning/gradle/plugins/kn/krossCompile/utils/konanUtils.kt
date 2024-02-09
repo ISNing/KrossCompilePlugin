@@ -7,10 +7,10 @@ import io.github.isning.gradle.plugins.cmake.params.entries.lang.ModifiableCXXEn
 import io.github.isning.gradle.plugins.cmake.params.entries.plus
 import io.github.isning.gradle.plugins.cmake.params.plus
 
-fun ModifiableCMakeTarget<*, *>.useKonan(target: String) {
+fun ModifiableCMakeTarget<*, *>.useKonan(target: String, executable: String = "run_konan") {
     configParams += (ModifiableCEntriesImpl().apply {
-        compiler = "run_konan;clang clang $target"
+        compiler = "$executable;clang clang $target"
     } + ModifiableCXXEntriesImpl().apply {
-        compiler = "run_konan;clang clang++ $target"
+        compiler = "$executable;clang clang++ $target"
     }).asCMakeParams
 }
