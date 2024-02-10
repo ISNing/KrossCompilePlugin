@@ -71,6 +71,14 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                     } ?: "run_konan")
             }
         }
+        fun KrossCompileTarget<out ModifiableCMakeTargetSettings<*, *, *>>.useKonanAndLld(target: String) {
+            useKonan(target)
+            cmake {
+                // Wait for https://youtrack.jetbrains.com/issue/KT-56569 to use lld from konan
+                forceUseLld()
+            }
+        }
+
         factories.add(defaultFactory<HostTarget, _, _>(project, container, "host", inheritedParents, inheritedNames))
 
         factories.add(
@@ -348,7 +356,7 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                     inheritedNames,
                     "linux"
                 ) {
-                    useKonan(it)
+                    useKonanAndLld(it)
                 }
             )
         }
@@ -377,7 +385,7 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                     inheritedNames,
                     "mingw"
                 ) {
-                    useKonan(it)
+                    useKonanAndLld(it)
                 }
             )
         }
