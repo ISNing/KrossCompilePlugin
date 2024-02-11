@@ -6,6 +6,16 @@ import io.github.isning.gradle.plugins.cmake.params.entries.lang.ModifiableCEntr
 import io.github.isning.gradle.plugins.cmake.params.entries.lang.ModifiableCXXEntriesImpl
 import io.github.isning.gradle.plugins.cmake.params.entries.plus
 import io.github.isning.gradle.plugins.cmake.params.plus
+import org.gradle.api.Project
+
+val Project.konanExecutable: String
+    get() = (project.properties["konan.dir"] as String?)?.let {
+        listOf(
+            it,
+            "bin",
+            "run_konan"
+        ).joinToString("/")
+    } ?: findExecutableOnPath("run_konan") ?: error("run_konan executable not found in `konan.dir` or PATH")
 
 fun ModifiableCMakeTarget<*, *>.useKonan(target: String, executable: String = "run_konan") {
     configParams += (ModifiableCEntriesImpl().apply {

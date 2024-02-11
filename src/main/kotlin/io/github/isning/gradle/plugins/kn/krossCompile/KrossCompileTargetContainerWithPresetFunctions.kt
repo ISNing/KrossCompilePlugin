@@ -17,11 +17,17 @@
 package io.github.isning.gradle.plugins.kn.krossCompile
 
 import io.github.isning.gradle.plugins.cmake.*
+import io.github.isning.gradle.plugins.cmake.params.CustomCMakeParams
 import io.github.isning.gradle.plugins.cmake.params.ModifiableCMakeBuildParams
 import io.github.isning.gradle.plugins.cmake.params.ModifiableCMakeGeneralParams
+import io.github.isning.gradle.plugins.cmake.params.entries.CustomCMakeCacheEntries
+import io.github.isning.gradle.plugins.cmake.params.entries.asCMakeParams
+import io.github.isning.gradle.plugins.cmake.params.entries.platform.ModifiablePlatformEntriesImpl
 import io.github.isning.gradle.plugins.cmake.params.platform.*
+import io.github.isning.gradle.plugins.cmake.params.plus
 import io.github.isning.gradle.plugins.cmake.targets.*
 import io.github.isning.gradle.plugins.kn.krossCompile.utils.decamelizeWith
+import io.github.isning.gradle.plugins.kn.krossCompile.utils.konanExecutable
 import io.github.isning.gradle.plugins.kn.krossCompile.utils.useKonan
 import org.gradle.api.Action
 import org.gradle.api.Project
@@ -62,13 +68,8 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
             cmake {
                 useKonan(
                     target.decamelizeWith("_"),
-                    (project.properties["konan.dir"] as String?)?.let {
-                        listOf(
-                            it,
-                            "bin",
-                            "run_konan"
-                        ).joinToString("/")
-                    } ?: "run_konan")
+                    project.konanExecutable
+                )
             }
         }
         fun KrossCompileTarget<out ModifiableCMakeTargetSettings<*, *, *>>.useKonanAndLld(target: String) {
