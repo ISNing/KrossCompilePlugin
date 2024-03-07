@@ -113,13 +113,13 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                 )
             }
             factories.add(
-                defaultFactory<GenericTarget, _, _>(
+                defaultFactory<AndroidTarget, _, _>(
                     project,
                     container,
                     "$it.konan",
                     inheritedParents,
                     inheritedNames,
-                    "generic"
+                    "android"
                 ) {
                     useKonanAndLld(it)
                 }
@@ -142,13 +142,13 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                 )
             }
             factories.add(
-                defaultFactory<GenericTarget, _, _>(
+                defaultFactory<IOSTarget, _, _>(
                     project,
                     container,
                     "$it.konan",
                     inheritedParents,
                     inheritedNames,
-                    "generic"
+                    "ios"
                 ) {
                     useKonan(it)
                 }
@@ -180,13 +180,13 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                 )
             }
             factories.add(
-                defaultFactory<GenericTarget, _, _>(
+                defaultFactory<IOSSimulatorTarget, _, _>(
                     project,
                     container,
                     "$it.konan",
                     inheritedParents,
                     inheritedNames,
-                    "generic"
+                    "iosSimulator"
                 ) {
                     useKonan(it.replace("SimulatorX64$".toRegex(), "X64"))
                 }
@@ -218,13 +218,13 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                 )
             }
             factories.add(
-                defaultFactory<GenericTarget, _, _>(
+                defaultFactory<WatchOSTarget, _, _>(
                     project,
                     container,
                     "$it.konan",
                     inheritedParents,
                     inheritedNames,
-                    "generic"
+                    "watchos"
                 ) {
                     useKonan(it)
                 }
@@ -256,13 +256,13 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                 )
             }
             factories.add(
-                defaultFactory<GenericTarget, _, _>(
+                defaultFactory<WatchOSSimulatorTarget, _, _>(
                     project,
                     container,
                     "$it.konan",
                     inheritedParents,
                     inheritedNames,
-                    "generic"
+                    "watchosSimulator"
                 ) {
                     useKonan(it.replace("SimulatorX64$".toRegex(), "X64"))
                 }
@@ -285,13 +285,13 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                 )
             }
             factories.add(
-                defaultFactory<GenericTarget, _, _>(
+                defaultFactory<TvOSTarget, _, _>(
                     project,
                     container,
                     "$it.konan",
                     inheritedParents,
                     inheritedNames,
-                    "generic"
+                    "tvos"
                 ) {
                     useKonan(it)
                 }
@@ -323,13 +323,13 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                 )
             }
             factories.add(
-                defaultFactory<GenericTarget, _, _>(
+                defaultFactory<TvOSSimulatorTarget, _, _>(
                     project,
                     container,
                     "$it.konan",
                     inheritedParents,
                     inheritedNames,
-                    "generic"
+                    "tvosSimulator"
                 ) {
                     useKonan(it.replace("SimulatorX64$".toRegex(), "X64"))
                 }
@@ -353,13 +353,13 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                 )
             }
             factories.add(
-                defaultFactory<GenericTarget, _, _>(
+                defaultFactory<LinuxTarget, _, _>(
                     project,
                     container,
                     "$it.konan",
                     inheritedParents,
                     inheritedNames,
-                    "generic"
+                    "linux"
                 ) {
                     useKonanAndLld(it)
                 }
@@ -382,13 +382,13 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                 )
             }
             factories.add(
-                defaultFactory<GenericTarget, _, _>(
+                defaultFactory<MinGWTarget, _, _>(
                     project,
                     container,
                     "$it.konan",
                     inheritedParents,
                     inheritedNames,
-                    "generic"
+                    "mingw"
                 ) {
                     useKonanAndLld(it)
                 }
@@ -412,13 +412,13 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                 )
             }
             factories.add(
-                defaultFactory<GenericTarget, _, _>(
+                defaultFactory<DarwinTarget, _, _>(
                     project,
                     container,
                     "$it.konan",
                     inheritedParents,
                     inheritedNames,
-                    "generic"
+                    "macos"
                 ) {
                     useKonan(it)
                 }
@@ -556,9 +556,9 @@ interface DefaultFunctions<T : KrossCompileTarget<*>> : FunctionsBase<T> {
 interface KonanFunctions<T : KrossCompileTarget<*>> : FunctionsBase<T> {
     fun konan(
         name: String = defaultTargetName,
-        configure: KCGenericTarget.() -> Unit = { }
-    ): KCGenericTarget =
-        inlinedConfigureOrCreateGeneric(
+        configure: T.() -> Unit = { }
+    ): T =
+        inlinedConfigureOrCreate(
             name,
             "$baseFactoryName.konan",
             configure
@@ -566,8 +566,8 @@ interface KonanFunctions<T : KrossCompileTarget<*>> : FunctionsBase<T> {
 
     fun konan() = konan(defaultTargetName) { }
     fun konan(name: String) = konan(name) { }
-    fun konan(name: String, configure: Action<KCGenericTarget>) = konan(name) { configure.execute(this) }
-    fun konan(configure: Action<KCGenericTarget>) = konan(defaultTargetName) { configure.execute(this) }
+    fun konan(name: String, configure: Action<T>) = konan(name) { configure.execute(this) }
+    fun konan(configure: Action<T>) = konan(defaultTargetName) { configure.execute(this) }
 }
 
 interface NdkFunctions<T : KrossCompileTarget<*>> : FunctionsBase<T> {
