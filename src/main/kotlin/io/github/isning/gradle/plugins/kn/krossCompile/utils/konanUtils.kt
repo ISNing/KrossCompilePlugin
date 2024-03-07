@@ -17,10 +17,30 @@ val Project.konanExecutable: String
         ).joinToString("/")
     } ?: findExecutableOnPath("run_konan") ?: error("run_konan executable not found in `konan.dir` or PATH")
 
-fun ModifiableCMakeTarget<*, *>.useKonan(target: String, executable: String = "run_konan") {
+fun parseKonanClangCommand(runKonanExecutable: String, tool: String, target: String): List<String> {
+    val processBuilder = ProcessBuilder(runKonanExecutable, "clang", tool, target, "-###")
+    val process = processBuilder.start()
+    val output = process.inputStream.bufferedReader().readText()
+    if (process.waitFor() != 0) {
+        error("Failed to parse konan clang command: $output")
+    }
+    return output.lines().first().split(" ").filterNot { it == "-###" }
+}
+
+fun ModifiableCMakeTarget<*, *>.useKonan(target: String, executable: String = "run_konan", extraFlags: String? = null) {
     configParams += (ModifiableCEntriesImpl().apply {
-        compiler = "$executable;clang clang $target"
+        val parsed = parseKonanClangCommand(executable, "clang", target)
+        compiler = parsed.first()
+        flagsInit = parsed.drop(1).joinToString(" ")
+        if (!extraFlags.isNullOrBlank()) {
+            flagsInit += " $extraFlags"
+        }
     } + ModifiableCXXEntriesImpl().apply {
-        compiler = "$executable;clang clang++ $target"
+        val parsed = parseKonanClangCommand(executable, "clang++", target)
+        compiler = parsed.first()
+        flagsInit = parsed.drop(1).joinToString(" ")
+        if (!extraFlags.isNullOrBlank()) {
+            flagsInit += " $extraFlags"
+        }
     }).asCMakeParams
 }

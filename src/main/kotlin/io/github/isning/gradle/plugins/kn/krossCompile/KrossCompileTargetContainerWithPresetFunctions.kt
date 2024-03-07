@@ -64,16 +64,20 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
         inheritedParents: List<KrossCompileConfiguration<*>>,
         inheritedNames: List<String>
     ) {
-        fun KrossCompileTarget<out ModifiableCMakeTargetSettings<*, *, *>>.useKonan(target: String) {
+        fun KrossCompileTarget<out ModifiableCMakeTargetSettings<*, *, *>>.useKonan(target: String, extraFlags: String? = null) {
             cmake {
                 useKonan(
                     target.decamelizeWith("_"),
-                    project.konanExecutable
+                    project.konanExecutable,
+                    extraFlags
                 )
             }
         }
-        fun KrossCompileTarget<out ModifiableCMakeTargetSettings<*, *, *>>.useKonanAndLld(target: String) {
-            useKonan(target)
+        fun KrossCompileTarget<out ModifiableCMakeTargetSettings<*, *, *>>.useKonanAndLld(target: String, extraFlags: String? = null) {
+            useKonan(
+                target,
+                extraFlags
+            )
             cmake {
                 // Wait for https://youtrack.jetbrains.com/issue/KT-56569 to use lld from konan
                 forceUseLld()
@@ -109,15 +113,15 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                 )
             }
             factories.add(
-                defaultFactory<AndroidTarget, _, _>(
+                defaultFactory<GenericTarget, _, _>(
                     project,
                     container,
                     "$it.konan",
                     inheritedParents,
                     inheritedNames,
-                    "android"
+                    "generic"
                 ) {
-                    useKonan(it)
+                    useKonanAndLld(it)
                 }
             )
         }
@@ -138,13 +142,13 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                 )
             }
             factories.add(
-                defaultFactory<IOSTarget, _, _>(
+                defaultFactory<GenericTarget, _, _>(
                     project,
                     container,
                     "$it.konan",
                     inheritedParents,
                     inheritedNames,
-                    "ios"
+                    "generic"
                 ) {
                     useKonan(it)
                 }
@@ -176,13 +180,13 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                 )
             }
             factories.add(
-                defaultFactory<IOSSimulatorTarget, _, _>(
+                defaultFactory<GenericTarget, _, _>(
                     project,
                     container,
                     "$it.konan",
                     inheritedParents,
                     inheritedNames,
-                    "iosSimulator"
+                    "generic"
                 ) {
                     useKonan(it.replace("SimulatorX64$".toRegex(), "X64"))
                 }
@@ -214,13 +218,13 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                 )
             }
             factories.add(
-                defaultFactory<WatchOSTarget, _, _>(
+                defaultFactory<GenericTarget, _, _>(
                     project,
                     container,
                     "$it.konan",
                     inheritedParents,
                     inheritedNames,
-                    "watchos"
+                    "generic"
                 ) {
                     useKonan(it)
                 }
@@ -252,13 +256,13 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                 )
             }
             factories.add(
-                defaultFactory<WatchOSSimulatorTarget, _, _>(
+                defaultFactory<GenericTarget, _, _>(
                     project,
                     container,
                     "$it.konan",
                     inheritedParents,
                     inheritedNames,
-                    "watchosSimulator"
+                    "generic"
                 ) {
                     useKonan(it.replace("SimulatorX64$".toRegex(), "X64"))
                 }
@@ -281,13 +285,13 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                 )
             }
             factories.add(
-                defaultFactory<TvOSTarget, _, _>(
+                defaultFactory<GenericTarget, _, _>(
                     project,
                     container,
                     "$it.konan",
                     inheritedParents,
                     inheritedNames,
-                    "tvos"
+                    "generic"
                 ) {
                     useKonan(it)
                 }
@@ -319,13 +323,13 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                 )
             }
             factories.add(
-                defaultFactory<TvOSSimulatorTarget, _, _>(
+                defaultFactory<GenericTarget, _, _>(
                     project,
                     container,
                     "$it.konan",
                     inheritedParents,
                     inheritedNames,
-                    "tvosSimulator"
+                    "generic"
                 ) {
                     useKonan(it.replace("SimulatorX64$".toRegex(), "X64"))
                 }
@@ -349,13 +353,13 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                 )
             }
             factories.add(
-                defaultFactory<LinuxTarget, _, _>(
+                defaultFactory<GenericTarget, _, _>(
                     project,
                     container,
                     "$it.konan",
                     inheritedParents,
                     inheritedNames,
-                    "linux"
+                    "generic"
                 ) {
                     useKonanAndLld(it)
                 }
@@ -378,13 +382,13 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                 )
             }
             factories.add(
-                defaultFactory<MinGWTarget, _, _>(
+                defaultFactory<GenericTarget, _, _>(
                     project,
                     container,
                     "$it.konan",
                     inheritedParents,
                     inheritedNames,
-                    "mingw"
+                    "generic"
                 ) {
                     useKonanAndLld(it)
                 }
@@ -408,13 +412,13 @@ interface KrossCompileTargetContainerWithFactoriesRegisterer : KrossCompileTarge
                 )
             }
             factories.add(
-                defaultFactory<DarwinTarget, _, _>(
+                defaultFactory<GenericTarget, _, _>(
                     project,
                     container,
                     "$it.konan",
                     inheritedParents,
                     inheritedNames,
-                    "macos"
+                    "generic"
                 ) {
                     useKonan(it)
                 }
@@ -520,10 +524,17 @@ interface HasInlinedHelperFunctions<T : KrossCompileTarget<*>> {
         factoryName: String,
         configure: T.() -> Unit,
     ): T
+
+    fun inlinedConfigureOrCreateGeneric(
+        targetName: String,
+        factoryName: String,
+        configure: KCGenericTarget.() -> Unit,
+    ): KCGenericTarget
 }
 
-interface FunctionsBase<T : KrossCompileTarget<*>> : HasBaseFactoryName, HasDefaultTargetName,
-    HasInlinedHelperFunctions<T>
+interface FunctionsBaseSlim : HasBaseFactoryName, HasDefaultTargetName
+
+interface FunctionsBase<T : KrossCompileTarget<*>> : FunctionsBaseSlim, HasInlinedHelperFunctions<T>
 
 interface DefaultFunctions<T : KrossCompileTarget<*>> : FunctionsBase<T> {
     operator fun invoke(
@@ -545,9 +556,9 @@ interface DefaultFunctions<T : KrossCompileTarget<*>> : FunctionsBase<T> {
 interface KonanFunctions<T : KrossCompileTarget<*>> : FunctionsBase<T> {
     fun konan(
         name: String = defaultTargetName,
-        configure: T.() -> Unit = { }
-    ): T =
-        inlinedConfigureOrCreate(
+        configure: KCGenericTarget.() -> Unit = { }
+    ): KCGenericTarget =
+        inlinedConfigureOrCreateGeneric(
             name,
             "$baseFactoryName.konan",
             configure
@@ -555,8 +566,8 @@ interface KonanFunctions<T : KrossCompileTarget<*>> : FunctionsBase<T> {
 
     fun konan() = konan(defaultTargetName) { }
     fun konan(name: String) = konan(name) { }
-    fun konan(name: String, configure: Action<T>) = konan(name) { configure.execute(this) }
-    fun konan(configure: Action<T>) = konan(defaultTargetName) { configure.execute(this) }
+    fun konan(name: String, configure: Action<KCGenericTarget>) = konan(name) { configure.execute(this) }
+    fun konan(configure: Action<KCGenericTarget>) = konan(defaultTargetName) { configure.execute(this) }
 }
 
 interface NdkFunctions<T : KrossCompileTarget<*>> : FunctionsBase<T> {
@@ -650,6 +661,17 @@ private inline fun <reified T : KrossCompileTarget<*>> KrossCompileTargetContain
             factories.getByName(factoryName) as KrossCompileTargetFactory<T>,
             configure
         )
+
+        @Suppress("UNCHECKED_CAST")
+        override fun inlinedConfigureOrCreateGeneric(
+            targetName: String,
+            factoryName: String,
+            configure: KCGenericTarget.() -> Unit
+        ): KCGenericTarget = configureOrCreate(
+            targetName,
+            factories.getByName(factoryName) as KrossCompileTargetFactory<KCGenericTarget>,
+            configure
+        )
     }
 
 private inline fun <reified T : KrossCompileTarget<*>> KrossCompileTargetContainerWithFactories.ndkWithKonanWithClangWithZig(
@@ -669,6 +691,17 @@ private inline fun <reified T : KrossCompileTarget<*>> KrossCompileTargetContain
         ): T = configureOrCreate(
             targetName,
             factories.getByName(factoryName) as KrossCompileTargetFactory<T>,
+            configure
+        )
+
+        @Suppress("UNCHECKED_CAST")
+        override fun inlinedConfigureOrCreateGeneric(
+            targetName: String,
+            factoryName: String,
+            configure: KCGenericTarget.() -> Unit
+        ): KCGenericTarget = configureOrCreate(
+            targetName,
+            factories.getByName(factoryName) as KrossCompileTargetFactory<KCGenericTarget>,
             configure
         )
     }
@@ -692,6 +725,17 @@ private inline fun <reified T : KrossCompileTarget<*>> KrossCompileTargetContain
             factories.getByName(factoryName) as KrossCompileTargetFactory<T>,
             configure
         )
+
+        @Suppress("UNCHECKED_CAST")
+        override fun inlinedConfigureOrCreateGeneric(
+            targetName: String,
+            factoryName: String,
+            configure: KCGenericTarget.() -> Unit
+        ): KCGenericTarget = configureOrCreate(
+            targetName,
+            factories.getByName(factoryName) as KrossCompileTargetFactory<KCGenericTarget>,
+            configure
+        )
     }
 
 private inline fun <reified T : KrossCompileTarget<*>> KrossCompileTargetContainerWithFactories.konanWithClangWithZig(
@@ -711,6 +755,17 @@ private inline fun <reified T : KrossCompileTarget<*>> KrossCompileTargetContain
         ): T = configureOrCreate(
             targetName,
             factories.getByName(factoryName) as KrossCompileTargetFactory<T>,
+            configure
+        )
+
+        @Suppress("UNCHECKED_CAST")
+        override fun inlinedConfigureOrCreateGeneric(
+            targetName: String,
+            factoryName: String,
+            configure: KCGenericTarget.() -> Unit
+        ): KCGenericTarget = configureOrCreate(
+            targetName,
+            factories.getByName(factoryName) as KrossCompileTargetFactory<KCGenericTarget>,
             configure
         )
     }

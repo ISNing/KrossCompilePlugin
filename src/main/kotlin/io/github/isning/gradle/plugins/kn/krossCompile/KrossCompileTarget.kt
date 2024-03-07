@@ -133,6 +133,7 @@ class KrossCompileTargetImpl<C : ModifiableCMakeGeneralParams, B : ModifiableCMa
     }
 }
 
+typealias KCGenericTarget = KrossCompileTargetImpl<ModifiableGenericParamsImpl, ModifiableCMakeBuildParamsImpl>
 typealias KCHostTarget = KrossCompileTargetImpl<ModifiableHostParamsImpl, ModifiableCMakeBuildParamsImpl>
 typealias KCAndroidTarget = KrossCompileTargetImpl<ModifiableAndroidParamsImpl, ModifiableCMakeBuildParamsImpl>
 typealias KCIOSTarget = KrossCompileTargetImpl<ModifiableIOSParamsImpl, ModifiableCMakeBuildParamsImpl>
