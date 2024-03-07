@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "io.github.isning.gradle.plugins.kn"
-version = "0.1.6"
+version = "0.1.7"
 
 Properties().apply {
     rootProject.file("local.properties").takeIf { it.exists() && it.isFile }?.let { load(it.reader()) }
@@ -28,7 +28,7 @@ repositories {
 
 dependencies {
     implementation("org.apache.commons:commons-text:1.10.0")
-    implementation("io.github.isning.gradle.plugins:CMakePlugin:0.1.3")
+    implementation("io.github.isning.gradle.plugins:CMakePlugin:0.1.5")
     implementation("org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin:1.9.21")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 }
