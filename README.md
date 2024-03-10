@@ -135,7 +135,7 @@ platform (e.g., `ios`, `macos`, `watchos`, `tvos`), `[arch]` with the architectu
 compiler (`konan`, `xcode`, `clang`, `zig`).
 
 Compiler preset `konan` is **Highly recommended** for it can keep building toolchain aligned with K/N compiling progress
-to avoid potential linking failure)
+to avoid potential linking failure.
 
 *Note*: To know more about configuring `cmake` block, see [CMakePlugin](https://github.com/ISNing/CMakePlugin)
 
