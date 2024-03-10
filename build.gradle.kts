@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "io.github.isning.gradle.plugins.kn"
-version = "0.1.8"
+version = "0.1.9"
 
 Properties().apply {
     rootProject.file("local.properties").takeIf { it.exists() && it.isFile }?.let { load(it.reader()) }
