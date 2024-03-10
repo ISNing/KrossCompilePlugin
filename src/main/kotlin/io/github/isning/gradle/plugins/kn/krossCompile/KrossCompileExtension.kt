@@ -45,7 +45,7 @@ open class KrossCompileExtension(project: Project) :
                 ModifiableCMakeGeneralParamsImpl().apply {
                     sourceDir = this@KrossCompileExtension.sourceDir
                 }
-            } }))// TODO: cmakeExtension must be created before this extension
+            } }))
 
     val rawLibraries: NamedDomainObjectContainer<KrossCompileLibrary<*>> =
         project.container(KrossCompileLibrary::class.java).apply {

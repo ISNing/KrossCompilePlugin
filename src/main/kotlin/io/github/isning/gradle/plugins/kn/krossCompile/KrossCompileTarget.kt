@@ -88,7 +88,7 @@ class KrossCompileTargetImpl<C : ModifiableCMakeGeneralParams, B : ModifiableCMa
         project.kmpExtension.targets.named(targetName, KotlinNativeTarget::class.java).get()
             .compilations.named("main").get()
             .cinterops.maybeCreate(inheritedNames.last()).apply {
-                defFile = defFileOutput.asFile //TODO: Is this working?
+                defFile = defFileOutput.asFile
             }
 
     private val genDefFileTask = run {
