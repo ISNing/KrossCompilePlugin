@@ -29,6 +29,9 @@ import org.gradle.api.tasks.TaskAction
 import java.io.File
 
 abstract class GenerateDefFileTask : DefaultTask() {
+    @get:Input
+    var replacementMap: Map<String, String> = emptyMap()
+
     @get:Internal
     var configurations: List<CInteropDefFileConfiguration> = emptyList()
 
@@ -46,7 +49,9 @@ abstract class GenerateDefFileTask : DefaultTask() {
     @TaskAction
     fun action() {
         realOutputFile.createNewFile()
-        realOutputFile.writeText(configuration.content)
+        realOutputFile.writeText(
+            replacementMap.entries.fold(configuration.content) { acc, (key, value) -> acc.replace(key, value) }
+        )
     }
 
     fun configureFrom(configuration: CInteropDefFileConfiguration) {

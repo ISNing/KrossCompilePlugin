@@ -107,7 +107,19 @@ krossCompile {
     - `packageName`: Specifies the package name for the generated bindings.
     - `headers`: Lists the header files to generate bindings for.
     - `includeDirs`: Specifies the directories to search for header files.
-    - ... For more properties, you can read c interoperation part of K/N official document.
+    - ... For more properties, you can read c interoperation part of K/N official document. 
+
+And for all the properties of `cinterop`, there are several stub strings that will be replaced by the plugin:
+
+| Stub String           | To                         |
+|-----------------------|----------------------------|
+| `{gradleProjectName}` | The name of gradle project |
+| `{libraryName}`       | The name of the library    |
+| `{targetName}`        | The name of the target     |
+
+Note: The stub strings of `cinterop` properties and `cmake` properties are different, for `cmake` properties, refer to
+[here](https://github.com/ISNing/CMakePlugin "CMakePlugin").
+
 - `cmake`: Configures the CMake build.
     - `outputPath`: Specifies the output binary's relative path of from the build directory.
     - `libraryArtifactNames`: Lists the names of the library artifacts to be produced by the CMake build.

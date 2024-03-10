@@ -119,6 +119,12 @@ class KrossCompileTargetImpl<C : ModifiableCMakeGeneralParams, B : ModifiableCMa
 
             configureFrom(delegatedConfigurations.map { it.cinterop })
 
+            replacementMap = mapOf(
+                "{gradleProjectName}" to project.name,
+                "{libraryName}" to inheritedNames.last(),
+                "{targetName}" to targetName,
+            )
+
             outputFile = this@KrossCompileTargetImpl.defFileOutput
             group = "other"
             description = "Generate CInterop def file for $taskNameSuffix target"
